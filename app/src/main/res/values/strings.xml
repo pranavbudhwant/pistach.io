@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Pistach.io</string>
+    <string name="welcome_to_home_page">Welcome to Home Page!</string>
+    <string name="emailid">Email</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="renter_password">Confirm Password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="submit">Submit</string>
+</resources>
