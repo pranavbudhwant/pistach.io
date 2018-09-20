@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "184272396519",
+    "firebase_url": "https://pistachio-8f641.firebaseio.com",
+    "project_id": "pistachio-8f641",
+    "storage_bucket": "pistachio-8f641.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:184272396519:android:c9d9a9157dfbb27e",
+        "android_client_info": {
+          "package_name": "com.hersheys.recommender.pistachio"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "184272396519-mkjbgm0nbmbhfo180tpm98lmr7qskakd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hersheys.recommender.pistachio",
+            "certificate_hash": "ab269f068dcffd8c4dc3c8134ab8190589872f4b"
+          }
+        },
+        {
+          "client_id": "184272396519-4ak980g1r9j5juqmqc47ha3hc1lhoelq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUJa_cH4LhjVDzvSxI7mvp3VVulldnM9I"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "184272396519-4ak980g1r9j5juqmqc47ha3hc1lhoelq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
