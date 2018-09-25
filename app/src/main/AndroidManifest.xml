@@ -17,7 +17,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".SignUpActivity" />
-        <activity android:name=".UserHomeActivity"></activity>
+        <activity android:name=".UserHomeActivity" />
+        <activity android:name=".RatingPage"></activity>
     </application>
 
 </manifest>
