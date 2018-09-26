@@ -74,6 +74,5 @@ public class SignInActivity extends AppCompatActivity {
                 SignInActivity.this.startActivity(signupIntent);
             }
         });
-
     }
 }
