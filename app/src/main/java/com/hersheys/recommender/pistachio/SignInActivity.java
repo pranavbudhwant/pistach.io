@@ -29,8 +29,8 @@ public class SignInActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_rating_page);
-        /*mAuth = FirebaseAuth.getInstance();
+        setContentView(R.layout.activity_sign_in);
+        mAuth = FirebaseAuth.getInstance();
         emailField = (EditText) findViewById(R.id.emailField);
         passwordField = (EditText) findViewById(R.id.passField);
 
@@ -49,7 +49,7 @@ public class SignInActivity extends AppCompatActivity {
                                     Log.d(TAG, "signInWithEmail:success");
                                     FirebaseUser user = mAuth.getCurrentUser();
                                     //updateUI(user);
-                                    Intent signinIntent = new Intent(SignInActivity.this, UserHomeActivity.class);
+                                    Intent signinIntent = new Intent(SignInActivity.this, RatingPage.class);
                                     signinIntent.putExtra("email", email);
                                     signinIntent.putExtra("password",password);
                                     SignInActivity.this.startActivity(signinIntent);
@@ -74,6 +74,6 @@ public class SignInActivity extends AppCompatActivity {
                 SignInActivity.this.startActivity(signupIntent);
             }
         });
-        */
+
     }
 }
