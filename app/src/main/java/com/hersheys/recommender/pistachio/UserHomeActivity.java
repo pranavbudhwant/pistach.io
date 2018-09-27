@@ -1,40 +1,37 @@
 package com.hersheys.recommender.pistachio;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.TabItem;
+import android.view.View;
 import android.widget.Toast;
 
 
-public class UserHomeActivity extends AppCompatActivity {
+public class UserHomeActivity extends AppCompatActivity implements GetRecommendationsTab.OnFragmentInteractionListener, RateTab.OnFragmentInteractionListener, UserTab.OnFragmentInteractionListener {
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_home);
 
-        TabLayout tab_bar = new TabLayout(UserHomeActivity.this);
-        tab_bar.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        TabLayout tabLayout = (TabLayout)findViewById(R.id.tabLayout);
+
+        final ViewPager viewPager = (ViewPager)findViewById(R.id.pager);
+        final PagerAdapter pAdapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
+        viewPager.setAdapter(pAdapter);
+        viewPager.setOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                switch(tab.getPosition()) {
-                    case 0:
-                        break;
-
-                    case 1:
-                        Intent RatingIntent = new Intent(UserHomeActivity.this, RatingPage.class);
-                        Toast.makeText(UserHomeActivity.this,"Going To Ratings Page",Toast.LENGTH_LONG).show();
-
-                        UserHomeActivity.this.startActivity(RatingIntent);
-                        break;
-
-                    case 2:
-                        break;
-
-                }
-
+                viewPager.setCurrentItem(tab.getPosition());
             }
 
             @Override
@@ -47,5 +44,10 @@ public class UserHomeActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }
