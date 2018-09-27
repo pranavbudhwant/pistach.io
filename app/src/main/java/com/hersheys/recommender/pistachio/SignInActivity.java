@@ -34,18 +34,18 @@ public class SignInActivity extends AppCompatActivity {
         emailField = (EditText) findViewById(R.id.emailField);
         passwordField = (EditText) findViewById(R.id.passField);
 
-        Intent intent = new Intent(SignInActivity.this, UserHomeActivity.class);
+        /*Intent intent = new Intent(SignInActivity.this, UserHomeActivity.class);
         SignInActivity.this.startActivity(intent);
-        /*
+
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             // User is signed in
-            Intent signinIntent = new Intent(SignInActivity.this, RatingPage.class);
+            Intent signinIntent = new Intent(SignInActivity.this, UserHomeActivity.class);
             SignInActivity.this.startActivity(signinIntent);
         } else {
             // No user is signed in
-        }
+        }*/
         signInButton = (Button) findViewById(R.id.signInButton);
         signInButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -61,7 +61,7 @@ public class SignInActivity extends AppCompatActivity {
                                     Log.d(TAG, "signInWithEmail:success");
                                     FirebaseUser user = mAuth.getCurrentUser();
                                     //updateUI(user);
-                                    Intent signinIntent = new Intent(SignInActivity.this, RatingPage.class);
+                                    Intent signinIntent = new Intent(SignInActivity.this, UserHomeActivity.class);
                                     signinIntent.putExtra("email", email);
                                     signinIntent.putExtra("password",password);
                                     SignInActivity.this.startActivity(signinIntent);
@@ -86,6 +86,6 @@ public class SignInActivity extends AppCompatActivity {
                 SignInActivity.this.startActivity(signupIntent);
             }
         });
-*/
+
     }
 }
