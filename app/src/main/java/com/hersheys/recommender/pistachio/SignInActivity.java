@@ -36,7 +36,7 @@ public class SignInActivity extends AppCompatActivity {
 
         /*Intent intent = new Intent(SignInActivity.this, UserHomeActivity.class);
         SignInActivity.this.startActivity(intent);
-
+		*/
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
@@ -45,7 +45,7 @@ public class SignInActivity extends AppCompatActivity {
             SignInActivity.this.startActivity(signinIntent);
         } else {
             // No user is signed in
-        }*/
+        }
         signInButton = (Button) findViewById(R.id.signInButton);
         signInButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
