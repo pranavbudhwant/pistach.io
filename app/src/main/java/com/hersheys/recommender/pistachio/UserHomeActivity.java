@@ -15,7 +15,7 @@ public class UserHomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_home);
 
-        TabLayout tab_bar = new TabLayout(this);
+        TabLayout tab_bar = new TabLayout(UserHomeActivity.this);
         tab_bar.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
