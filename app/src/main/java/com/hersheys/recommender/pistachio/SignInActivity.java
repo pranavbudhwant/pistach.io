@@ -34,6 +34,14 @@ public class SignInActivity extends AppCompatActivity {
         emailField = (EditText) findViewById(R.id.emailField);
         passwordField = (EditText) findViewById(R.id.passField);
 
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            // User is signed in
+            Intent signinIntent = new Intent(SignInActivity.this, RatingPage.class);
+            SignInActivity.this.startActivity(signinIntent);
+        } else {
+            // No user is signed in
+        }
         signInButton = (Button) findViewById(R.id.signInButton);
         signInButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {

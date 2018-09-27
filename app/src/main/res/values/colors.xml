@@ -5,4 +5,6 @@
     <color name="colorAccent">#064676</color>
     <color name="colorEndColor">#cecdcd</color>
     <color name="colorStartColor">#121212</color>
+    <color name="white">#fff</color>
+    <color name="colorStarActive">#febf00</color>
 </resources>

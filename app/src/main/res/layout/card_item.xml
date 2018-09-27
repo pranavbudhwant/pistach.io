@@ -18,32 +18,51 @@
         android:background="@color/colorEndColor" />
 
     <ImageView
-android:scaleType="centerCrop"
         android:id="@+id/Gradient"
         android:layout_width="match_parent"
         android:layout_height="104dp"
+        android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/gradient" />
+        app:srcCompat="@drawable/grad" />
 
     <RatingBar
         android:id="@+id/Rating"
         style="@style/Base.Widget.AppCompat.RatingBar.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
-        android:background="@drawable/rating_bar_style"
+        android:layout_marginEnd="84dp"
+        android:layout_marginRight="84dp"
+        android:layout_marginBottom="12dp"
         android:isIndicator="false"
         android:numStars="5"
+        android:progressTint="#febf00"
         android:scaleX="1.65"
         android:scaleY="1.65"
         android:stepSize="1.0"
+        android:theme="@style/RatingBar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <android.support.v7.widget.AppCompatImageButton
+        android:id="@+id/tickButton"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginBottom="8dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitXY"
+        android:src="@drawable/custom_selector"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/Rating"
+        app:srcCompat="@drawable/submit_rating" />
 
     <TextView
         android:id="@+id/Title"
