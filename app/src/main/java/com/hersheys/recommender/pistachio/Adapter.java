@@ -13,7 +13,6 @@ import java.util.*;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
 
-
     Context mContext;
     List<item> mData;
 
@@ -24,8 +23,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
 
     @Override
     public myViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View v = inflater.inflate(R.layout.card_item,parent,false);
 
@@ -34,7 +31,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
 
     @Override
     public void onBindViewHolder(myViewHolder holder, int position) {
-
         holder.background.setImageResource(mData.get(position).getBackground());
         holder.title.setText(mData.get(position).getTitle());
     }
