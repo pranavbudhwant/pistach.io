@@ -39,9 +39,9 @@ public class RatingPage extends AppCompatActivity {
 
         RecyclerView recyclerView = findViewById(R.id.card_list);
         List<item> mList = new ArrayList<>();
-        mList.add(new item(R.drawable.daredevil, "Daredevil"));
-        mList.add(new item(R.drawable.daredevil, "Daredevil"));
-        mList.add(new item(R.drawable.daredevil, "Daredevil"));
+        mList.add(new item(R.drawable.daredevil, "Daredevil", "Action|Thriller", "IMDB: 7.2"));
+        mList.add(new item(R.drawable.daredevil, "Daredevil", "Action|Thriller", "IMDB: 7.2"));
+        mList.add(new item(R.drawable.daredevil, "Daredevil", "Action|Thriller", "IMDB: 7.2"));
         Adapter adapter = new Adapter(this, mList);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

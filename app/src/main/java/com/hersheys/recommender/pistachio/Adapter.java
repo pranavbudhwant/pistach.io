@@ -9,6 +9,8 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.util.*;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
@@ -33,6 +35,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
     public void onBindViewHolder(myViewHolder holder, int position) {
         holder.background.setImageResource(mData.get(position).getBackground());
         holder.title.setText(mData.get(position).getTitle());
+        holder.genres.setText(mData.get(position).getGenres());
+        holder.imdb.setText(mData.get(position).getRating());
     }
 
     @Override
@@ -41,15 +45,16 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
     }
 
     public class myViewHolder extends RecyclerView.ViewHolder{
-
-
         ImageView background;
         TextView title;
-
+        TextView genres;
+        TextView imdb;
         public myViewHolder(View itemView) {
             super(itemView);
             background = itemView.findViewById(R.id.CardBackground);
             title = itemView.findViewById(R.id.Title);
+            genres = itemView.findViewById(R.id.genre);
+            imdb = itemView.findViewById(R.id.imdb);
         }
     }
 }

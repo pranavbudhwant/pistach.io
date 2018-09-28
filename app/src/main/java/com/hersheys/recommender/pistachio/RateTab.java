@@ -74,9 +74,9 @@ public class RateTab extends Fragment {
         //set recyclerview with adapter
         RecyclerView recyclerView = view.findViewById(R.id.card_list);
         List<item> mList = new ArrayList<>();
-        mList.add(new item(R.drawable.daredevil, "Daredevil"));
-        mList.add(new item(R.drawable.daredevil, "Daredevil"));
-        mList.add(new item(R.drawable.daredevil, "Daredevil"));
+        mList.add(new item(R.drawable.daredevil, "Daredevil (2017)", "Action | Thriller", "IMDB: 7.2"));
+        mList.add(new item(R.drawable.daredevil, "Daredevil (2017)", "Action | Thriller", "IMDB: 7.2"));
+        mList.add(new item(R.drawable.daredevil, "Daredevil (2017)", "Action | Thriller", "IMDB: 7.2"));
 
         Adapter adapter = new Adapter(getActivity(), mList);
 

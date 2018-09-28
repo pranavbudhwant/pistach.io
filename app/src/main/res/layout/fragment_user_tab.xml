@@ -13,4 +13,13 @@
         app:srcCompat="@drawable/ic_account_symbol_30dp"
         android:layout_centerInParent="true"/>
 
+    <Button
+        android:id="@+id/signOut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="36dp"
+        android:text="Sign Out" />
+
 </RelativeLayout>

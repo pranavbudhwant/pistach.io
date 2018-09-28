@@ -1,12 +1,18 @@
 package com.hersheys.recommender.pistachio;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+
+import com.google.firebase.auth.FirebaseAuth;
+
+import java.text.Collator;
 
 
 /**
@@ -17,17 +23,20 @@ import android.view.ViewGroup;
  * Use the {@link UserTab#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class UserTab extends Fragment {
+public class UserTab extends Fragment implements View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    Button signOutButton;
 
     public UserTab() {
         // Required empty public constructor
@@ -64,7 +73,10 @@ public class UserTab extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_user_tab, container, false);
+        View view = inflater.inflate(R.layout.fragment_user_tab, container, false);
+        signOutButton = (Button)view.findViewById(R.id.signOut);
+        signOutButton.setOnClickListener((View.OnClickListener) this);
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -89,6 +101,13 @@ public class UserTab extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onClick(View v) {
+        FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(getActivity(), SignInActivity.class);
+        startActivity(intent);
     }
 
     /**
