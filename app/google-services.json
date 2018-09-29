@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "184272396519-sgj47pu72volo6mfn83dbcsj5ega0jff.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hersheys.recommender.pistachio",
+            "certificate_hash": "cc7dc94f477f48d1756ea7a98006a6907e9f322a"
+          }
+        },
+        {
           "client_id": "184272396519-4ak980g1r9j5juqmqc47ha3hc1lhoelq.apps.googleusercontent.com",
           "client_type": 3
         }
