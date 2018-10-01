@@ -32,6 +32,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:id="@+id/pager">
+
     </android.support.v4.view.ViewPager>
 
     <android.support.design.widget.TabLayout
@@ -62,31 +63,31 @@
             android:icon="@drawable/ic_account_symbol_30dp" />
     </android.support.design.widget.TabLayout>
 
-<!--    <android.support.design.widget.TabLayout
-        android:id="@+id/TabBar"
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+    <!--    <android.support.design.widget.TabLayout
+            android:id="@+id/TabBar"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
-        <android.support.design.widget.TabItem
-            android:id="@+id/UserHome"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:icon="@drawable/ic_home_black_24dp" />
+            <android.support.design.widget.TabItem
+                android:id="@+id/UserHome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:icon="@drawable/ic_home_black_24dp" />
 
-        <android.support.design.widget.TabItem
-            android:id="@+id/Rate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:icon="@drawable/ic_rate_review_black_24dp" />
+            <android.support.design.widget.TabItem
+                android:id="@+id/Rate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:icon="@drawable/ic_rate_review_black_24dp" />
 
-        <android.support.design.widget.TabItem
-            android:id="@+id/Profile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:icon="@drawable/ic_account_symbol_30dp" />
-    </android.support.design.widget.TabLayout> -->
+            <android.support.design.widget.TabItem
+                android:id="@+id/Profile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:icon="@drawable/ic_account_symbol_30dp" />
+        </android.support.design.widget.TabLayout> -->
 
 </LinearLayout>
