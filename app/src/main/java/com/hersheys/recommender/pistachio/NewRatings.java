@@ -72,7 +72,7 @@ public class NewRatings extends Fragment {
         View view = inflater.inflate(R.layout.fragment_new_ratings, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.card_list);
         List<item> mList = new ArrayList<>();
-        mList.add(new item(R.drawable.daredevil, "Daredevil (2017)", "Action | Thriller", "IMDB: 7.2"));
+        mList.add(new item(R.drawable.daredevil, "Daredevil (2017)", "Adventure | Animation | Comedy", "IMDB: 7.2"));
         mList.add(new item(R.drawable.daredevil, "Daredevil (2017)", "Action | Thriller", "IMDB: 7.2"));
         mList.add(new item(R.drawable.daredevil, "Daredevil (2017)", "Action | Thriller", "IMDB: 7.2"));
 
