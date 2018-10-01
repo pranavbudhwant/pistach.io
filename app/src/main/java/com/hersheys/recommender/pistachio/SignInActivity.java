@@ -65,6 +65,7 @@ public class SignInActivity extends AppCompatActivity {
                                     signinIntent.putExtra("email", email);
                                     signinIntent.putExtra("password",password);
                                     SignInActivity.this.startActivity(signinIntent);
+
                                 } else {
                                     // If sign in fails, display a message to the user.
                                     Log.w(TAG, "signInWithEmail:failure", task.getException());

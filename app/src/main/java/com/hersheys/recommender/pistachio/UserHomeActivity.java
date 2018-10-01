@@ -52,4 +52,8 @@ public class UserHomeActivity extends AppCompatActivity implements GetRecommenda
     public void onFragmentInteraction(Uri uri) {
 
     }
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
 }
