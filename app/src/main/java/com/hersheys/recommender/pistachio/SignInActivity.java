@@ -52,6 +52,7 @@ public class SignInActivity extends AppCompatActivity {
             public void onClick(View v) {
                 email = emailField.getText().toString();
                 password = passwordField.getText().toString();
+<<<<<<< HEAD
 
                 if(validateEmail(email) && validatePassword(password)) {
                     Toast.makeText(getApplicationContext(), "E:" + email + "P:" + password, Toast.LENGTH_LONG).show();
@@ -76,6 +77,29 @@ public class SignInActivity extends AppCompatActivity {
                                         //updateUI(null);
                                     }
                                     // ...
+=======
+                Toast.makeText(getApplicationContext(), "E:" + email + "P:" + password, Toast.LENGTH_LONG).show();
+                mAuth.signInWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(SignInActivity.this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    // Sign in success, update UI with the signed-in user's information
+                                    Log.d(TAG, "signInWithEmail:success");
+                                    FirebaseUser user = mAuth.getCurrentUser();
+                                    //updateUI(user);
+                                    Intent signinIntent = new Intent(SignInActivity.this, UserHomeActivity.class);
+                                    signinIntent.putExtra("email", email);
+                                    signinIntent.putExtra("password",password);
+                                    SignInActivity.this.startActivity(signinIntent);
+
+                                } else {
+                                    // If sign in fails, display a message to the user.
+                                    Log.w(TAG, "signInWithEmail:failure", task.getException());
+                                    Toast.makeText(SignInActivity.this, "Authentication failed.",
+                                            Toast.LENGTH_SHORT).show();
+                                    //updateUI(null);
+>>>>>>> 474cf4742ed44bf0d2f29a4543c02b2cbd6d98b5
                                 }
                             });
                 }

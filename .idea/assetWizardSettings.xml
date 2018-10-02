@@ -91,7 +91,11 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
+<<<<<<< HEAD
                                       <entry key="url" value="jar:file:/Applications/Android%20Studio.app/Contents/plugins/android/lib/android.jar!/images/material_design_icons/communication/ic_email_black_24dp.xml" />
+=======
+                                      <entry key="url" value="jar:file:/D:/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/toggle/ic_star_black_24dp.xml" />
+>>>>>>> 474cf4742ed44bf0d2f29a4543c02b2cbd6d98b5
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -101,9 +105,13 @@
                         </option>
                         <option name="values">
                           <map>
+<<<<<<< HEAD
                             <entry key="color" value="cacaca" />
                             <entry key="height" value="36" />
                             <entry key="outputName" value="profile_email_asset" />
+=======
+                            <entry key="outputName" value="new_ratings" />
+>>>>>>> 474cf4742ed44bf0d2f29a4543c02b2cbd6d98b5
                             <entry key="overrideSize" value="true" />
                             <entry key="sourceFile" value="$APPLICATION_HOME_DIR$/bin/C:\Users\prnvb" />
                             <entry key="width" value="36" />

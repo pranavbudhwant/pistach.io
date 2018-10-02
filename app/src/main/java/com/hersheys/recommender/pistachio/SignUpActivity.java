@@ -17,6 +17,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -46,6 +47,7 @@ public class SignUpActivity extends AppCompatActivity {
                 pass  = passField.getText().toString();
                 cpass = cPassField.getText().toString();
 
+<<<<<<< HEAD
                 if(validateEmail(email) && validatePassword(pass) && validatePassword(cpass)) {
                     mAuth.createUserWithEmailAndPassword(email, pass)
                             .addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<AuthResult>() {
@@ -61,8 +63,26 @@ public class SignUpActivity extends AppCompatActivity {
                                         FirebaseDatabase.getInstance().getReference("Users")
                                                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                                 .setValue(userObj);
+=======
+                mAuth.createUserWithEmailAndPassword(email, pass)
+                        .addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    // Sign in success, update UI with the signed-in user's information
+                                    Log.d(TAG, "createUserWithEmail:success");
+                                    FirebaseUser user = mAuth.getCurrentUser();
+                                    Toast.makeText(SignUpActivity.this, "Authentication successful.",
+                                            Toast.LENGTH_LONG).show();
 
                                     /*
+                                    User userObj = new User(name, email);
+                                    FirebaseDatabase.getInstance().getReference("Users")
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .setValue(userObj);*/
+
+>>>>>>> 474cf4742ed44bf0d2f29a4543c02b2cbd6d98b5
+
                                     FirebaseAuth auth = FirebaseAuth.getInstance();
                                     FirebaseUser current_user = auth.getCurrentUser();
 
@@ -90,6 +110,7 @@ public class SignUpActivity extends AppCompatActivity {
                                                     }
                                                 }
                                             });
+<<<<<<< HEAD
                                     */
                                         Intent signinIntent = new Intent(SignUpActivity.this, UserHomeActivity.class);
                                         signinIntent.putExtra("email", email);
@@ -101,6 +122,20 @@ public class SignUpActivity extends AppCompatActivity {
                                         Log.w(TAG, "createUserWithEmail:failure", task.getException());
                                         Toast.makeText(SignUpActivity.this, "Authentication failed.",
                                                 Toast.LENGTH_SHORT).show();
+=======
+
+                                    Intent signinIntent = new Intent(SignUpActivity.this, UserHomeActivity.class);
+                                    signinIntent.putExtra("email", email);
+                                    signinIntent.putExtra("password",pass);
+                                    SignUpActivity.this.startActivity(signinIntent);
+
+
+                                } else {
+                                    // If sign in fails, display a message to the user.
+                                    Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                                    Toast.makeText(SignUpActivity.this, "Authentication failed.",
+                                            Toast.LENGTH_SHORT).show();
+>>>>>>> 474cf4742ed44bf0d2f29a4543c02b2cbd6d98b5
 
                                     }
 

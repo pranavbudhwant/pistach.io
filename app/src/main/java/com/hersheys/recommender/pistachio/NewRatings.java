@@ -3,9 +3,7 @@ package com.hersheys.recommender.pistachio;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,12 +17,12 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link RateTab.OnFragmentInteractionListener} interface
+ * {@link NewRatings.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link RateTab#newInstance} factory method to
+ * Use the {@link NewRatings#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RateTab extends Fragment implements MyRatings.OnFragmentInteractionListener, NewRatings.OnFragmentInteractionListener {
+public class NewRatings extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -36,7 +34,7 @@ public class RateTab extends Fragment implements MyRatings.OnFragmentInteraction
 
     private OnFragmentInteractionListener mListener;
 
-    public RateTab() {
+    public NewRatings() {
         // Required empty public constructor
     }
 
@@ -46,11 +44,11 @@ public class RateTab extends Fragment implements MyRatings.OnFragmentInteraction
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment RateTab.
+     * @return A new instance of fragment NewRatings.
      */
     // TODO: Rename and change types and number of parameters
-    public static RateTab newInstance(String param1, String param2) {
-        RateTab fragment = new RateTab();
+    public static NewRatings newInstance(String param1, String param2) {
+        NewRatings fragment = new NewRatings();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -68,20 +66,13 @@ public class RateTab extends Fragment implements MyRatings.OnFragmentInteraction
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState){
-
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_rate_tab, container, false);
-
-        //set recyclerview with adapter
-/*        RecyclerView recyclerView = view.findViewById(R.id.card_list);
+        View view = inflater.inflate(R.layout.fragment_new_ratings, container, false);
+        RecyclerView recyclerView = view.findViewById(R.id.card_list);
         List<item> mList = new ArrayList<>();
-        mList.add(new item(R.drawable.daredevil, "Daredevil (2017)", "Action | Thriller", "IMDB: 7.2"));
+        mList.add(new item(R.drawable.daredevil, "Daredevil (2017)", "Adventure | Animation | Comedy", "IMDB: 7.2"));
         mList.add(new item(R.drawable.daredevil, "Daredevil (2017)", "Action | Thriller", "IMDB: 7.2"));
         mList.add(new item(R.drawable.daredevil, "Daredevil (2017)", "Action | Thriller", "IMDB: 7.2"));
 
@@ -89,31 +80,6 @@ public class RateTab extends Fragment implements MyRatings.OnFragmentInteraction
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-*/
-        TabLayout tabLayout = (TabLayout)view.findViewById(R.id.rateTabLayout);
-
-        final ViewPager viewPager = (ViewPager)view.findViewById(R.id.rate_pager);
-        final RatePagerAdapter pAdapter = new RatePagerAdapter(getChildFragmentManager(), tabLayout.getTabCount());
-        viewPager.setAdapter(pAdapter);
-        viewPager.setOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                viewPager.setCurrentItem(tab.getPosition());
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
-
         return view;
     }
 
@@ -139,11 +105,6 @@ public class RateTab extends Fragment implements MyRatings.OnFragmentInteraction
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
     }
 
     /**

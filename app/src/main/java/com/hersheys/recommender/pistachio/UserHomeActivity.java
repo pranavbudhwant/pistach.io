@@ -12,8 +12,10 @@ import android.support.design.widget.TabItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.hersheys.recommender.pistachio.NewRatings.OnFragmentInteractionListener;
 
-public class UserHomeActivity extends AppCompatActivity implements GetRecommendationsTab.OnFragmentInteractionListener, RateTab.OnFragmentInteractionListener, UserTab.OnFragmentInteractionListener {
+
+public class UserHomeActivity extends AppCompatActivity implements GetRecommendationsTab.OnFragmentInteractionListener, RateTab.OnFragmentInteractionListener, UserTab.OnFragmentInteractionListener, MyRatings.OnFragmentInteractionListener, NewRatings.OnFragmentInteractionListener {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -49,5 +51,9 @@ public class UserHomeActivity extends AppCompatActivity implements GetRecommenda
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
     }
 }
