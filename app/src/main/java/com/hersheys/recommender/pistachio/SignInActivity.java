@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import android.text.TextUtils;
 
 public class SignInActivity extends AppCompatActivity {
     Button signInButton;
@@ -51,30 +52,40 @@ public class SignInActivity extends AppCompatActivity {
             public void onClick(View v) {
                 email = emailField.getText().toString();
                 password = passwordField.getText().toString();
-                Toast.makeText(getApplicationContext(), "E:" + email + "P:" + password, Toast.LENGTH_LONG).show();
-                mAuth.signInWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(SignInActivity.this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    // Sign in success, update UI with the signed-in user's information
-                                    Log.d(TAG, "signInWithEmail:success");
-                                    FirebaseUser user = mAuth.getCurrentUser();
-                                    //updateUI(user);
-                                    Intent signinIntent = new Intent(SignInActivity.this, UserHomeActivity.class);
-                                    signinIntent.putExtra("email", email);
-                                    signinIntent.putExtra("password",password);
-                                    SignInActivity.this.startActivity(signinIntent);
-                                } else {
-                                    // If sign in fails, display a message to the user.
-                                    Log.w(TAG, "signInWithEmail:failure", task.getException());
-                                    Toast.makeText(SignInActivity.this, "Authentication failed.",
-                                            Toast.LENGTH_SHORT).show();
-                                    //updateUI(null);
+
+                if(validateEmail(email) && validatePassword(password)) {
+                    Toast.makeText(getApplicationContext(), "E:" + email + "P:" + password, Toast.LENGTH_LONG).show();
+                    mAuth.signInWithEmailAndPassword(email, password)
+                            .addOnCompleteListener(SignInActivity.this, new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        // Sign in success, update UI with the signed-in user's information
+                                        Log.d(TAG, "signInWithEmail:success");
+                                        FirebaseUser user = mAuth.getCurrentUser();
+                                        //updateUI(user);
+                                        Intent signinIntent = new Intent(SignInActivity.this, UserHomeActivity.class);
+                                        signinIntent.putExtra("email", email);
+                                        signinIntent.putExtra("password", password);
+                                        SignInActivity.this.startActivity(signinIntent);
+                                    } else {
+                                        // If sign in fails, display a message to the user.
+                                        Log.w(TAG, "signInWithEmail:failure", task.getException());
+                                        Toast.makeText(SignInActivity.this, "Authentication failed.",
+                                                Toast.LENGTH_SHORT).show();
+                                        //updateUI(null);
+                                    }
+                                    // ...
                                 }
-                                // ...
-                            }
-                        });
+                            });
+                }
+                else if(validatePassword(password)){
+                    Toast.makeText(getApplicationContext(),"Password has to be atleast 6 characters", Toast.LENGTH_LONG).show();
+                }
+                else{
+                    Toast.makeText(getApplicationContext(),"Enter Valid Email and Password", Toast.LENGTH_LONG).show();
+                }
+
 
             }
         });
@@ -87,5 +98,17 @@ public class SignInActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public boolean validateEmail(String email){
+        return !TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+
+    }
+
+    public boolean validatePassword(String password){
+        if(password.length() < 6 )
+            return false;
+        else
+            return true;
     }
 }
