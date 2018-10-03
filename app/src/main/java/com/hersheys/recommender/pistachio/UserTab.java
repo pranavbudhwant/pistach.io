@@ -7,8 +7,18 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import android.app.Activity;
+import android.database.Cursor;
+import android.graphics.BitmapFactory;
+import android.provider.MediaStore;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.Toast;
+
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -37,6 +47,12 @@ public class UserTab extends Fragment implements View.OnClickListener {
     private OnFragmentInteractionListener mListener;
 
     Button signOutButton;
+    ImageView imgButton;
+
+
+    private static int RESULT_LOAD_IMG = 1;
+    String imgDecodableString;
+
 
     public UserTab() {
         // Required empty public constructor
@@ -69,6 +85,48 @@ public class UserTab extends Fragment implements View.OnClickListener {
         }
     }
 
+    public void loadImagefromGallery(View view) {
+        // Create intent to Open Image applications like Gallery, Google Photos
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        // Start the Intent
+        startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
+        Toast.makeText(getContext(),"In Gallery Function",Toast.LENGTH_LONG).show();
+
+
+    }
+
+     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        try {
+            // When an Image is picked
+            if (requestCode == RESULT_LOAD_IMG && resultCode == Activity.RESULT_OK
+                    && null != data) {
+                // Get the Image from data
+                Uri selectedImage = data.getData();
+                String[] filePathColumn = { MediaStore.Images.Media.DATA };
+                // Get the cursor
+                Cursor cursor = getContext().getContentResolver().query(selectedImage,
+                        filePathColumn, null, null, null);
+                // Move to first row
+                cursor.moveToFirst();
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                imgDecodableString = cursor.getString(columnIndex);
+                cursor.close();
+                // Set the Image in ImageView after decoding the String
+                imgButton.setImageBitmap(BitmapFactory.decodeFile(imgDecodableString));
+                //imgButton.setImageURI(selectedImage);
+            }
+            else {
+                Toast.makeText(this.getContext(), "You haven't picked Image",
+                        Toast.LENGTH_LONG).show();
+            }
+        } catch (Exception e) {
+            Toast.makeText(this.getContext(), "Something went wrong", Toast.LENGTH_LONG)
+                    .show();
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -76,6 +134,16 @@ public class UserTab extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_user_tab, container, false);
         signOutButton = (Button)view.findViewById(R.id.signOut);
         signOutButton.setOnClickListener((View.OnClickListener) this);
+
+        imgButton =(ImageView) view.findViewById(R.id.profile_photo);
+        imgButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(),"Image button",Toast.LENGTH_LONG).show();
+                loadImagefromGallery(v);
+            }
+        });
+
         return view;
     }
 
@@ -109,6 +177,8 @@ public class UserTab extends Fragment implements View.OnClickListener {
         Intent intent = new Intent(getActivity(), SignInActivity.class);
         startActivity(intent);
     }
+
+
 
     /**
      * This interface must be implemented by activities that contain this

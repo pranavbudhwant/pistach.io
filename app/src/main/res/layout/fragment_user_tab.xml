@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ScrollView01"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:scrollbars="none" >
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -16,13 +23,15 @@
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:orientation="vertical">
-           <ImageButton
-               android:background="@drawable/default_profile_photo"
-               android:layout_marginTop="50dp"
-               android:layout_gravity="center_horizontal"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:src="@mipmap/profile_photo_round"/>
+
+            <ImageView
+                android:id="@+id/profile_photo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="50dp"
+                android:background="@drawable/default_profile_photo"
+                android:src="@mipmap/profile_photo_round" />
             <TextView
                 android:layout_marginTop="10dp"
                 android:layout_gravity="center_horizontal"
@@ -173,10 +182,7 @@
                 android:paddingLeft="20dp"
                 android:text="Edit Profile"/>
         </LinearLayout>
-
     </LinearLayout>
-
-
     <Button
         android:textColor="@color/white"
         android:background="@drawable/sign_out_button_style"
@@ -187,5 +193,5 @@
         android:layout_height="wrap_content"
         android:text="Sign Out"
         />
-
 </LinearLayout>
+</ScrollView>
