@@ -5,9 +5,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -23,6 +25,22 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
         this.mData = mData;
     }
 
+    public class myViewHolder extends RecyclerView.ViewHolder{
+        ImageView background;
+        TextView title;
+        TextView genres;
+        TextView imdb;
+        ImageButton crossButton;
+        public myViewHolder(View itemView) {
+            super(itemView);
+            background = itemView.findViewById(R.id.CardBackground);
+            title = itemView.findViewById(R.id.Title);
+            genres = itemView.findViewById(R.id.genre);
+            imdb = itemView.findViewById(R.id.imdb);
+            crossButton = itemView.findViewById(R.id.crossButton);
+        }
+    }
+
     @Override
     public myViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -32,29 +50,31 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
     }
 
     @Override
-    public void onBindViewHolder(myViewHolder holder, int position) {
+    public void onBindViewHolder(myViewHolder holder, final int position) {
         holder.background.setImageResource(mData.get(position).getBackground());
         holder.title.setText(mData.get(position).getTitle());
         holder.genres.setText(mData.get(position).getGenres());
         holder.imdb.setText(mData.get(position).getRating());
+
+        holder.crossButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                if(position>=0) {
+                    mData.remove(position);
+                    notifyItemRemoved(position);
+                    notifyItemRangeChanged(position, mData.size());
+                    Toast.makeText(mContext, "Removed Card " + position, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
+
+
 
     @Override
     public int getItemCount() {
         return mData.size();
     }
 
-    public class myViewHolder extends RecyclerView.ViewHolder{
-        ImageView background;
-        TextView title;
-        TextView genres;
-        TextView imdb;
-        public myViewHolder(View itemView) {
-            super(itemView);
-            background = itemView.findViewById(R.id.CardBackground);
-            title = itemView.findViewById(R.id.Title);
-            genres = itemView.findViewById(R.id.genre);
-            imdb = itemView.findViewById(R.id.imdb);
-        }
-    }
+
 }

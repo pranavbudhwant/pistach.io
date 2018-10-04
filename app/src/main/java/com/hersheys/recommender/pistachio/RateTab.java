@@ -3,7 +3,9 @@ package com.hersheys.recommender.pistachio;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,7 +24,7 @@ import java.util.List;
  * Use the {@link RateTab#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RateTab extends Fragment {
+public class RateTab extends Fragment implements MyRatings.OnFragmentInteractionListener, NewRatings.OnFragmentInteractionListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -66,13 +68,18 @@ public class RateTab extends Fragment {
     }
 
     @Override
+    public void onViewCreated(View view, Bundle savedInstanceState){
+
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_rate_tab, container, false);
 
         //set recyclerview with adapter
-        RecyclerView recyclerView = view.findViewById(R.id.card_list);
+/*        RecyclerView recyclerView = view.findViewById(R.id.card_list);
         List<item> mList = new ArrayList<>();
         mList.add(new item(R.drawable.daredevil, "Daredevil (2017)", "Action | Thriller", "IMDB: 7.2"));
         mList.add(new item(R.drawable.daredevil, "Daredevil (2017)", "Action | Thriller", "IMDB: 7.2"));
@@ -82,6 +89,30 @@ public class RateTab extends Fragment {
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+*/
+        TabLayout tabLayout = (TabLayout)view.findViewById(R.id.rateTabLayout);
+
+        final ViewPager viewPager = (ViewPager)view.findViewById(R.id.rate_pager);
+        final RatePagerAdapter pAdapter = new RatePagerAdapter(getChildFragmentManager(), tabLayout.getTabCount());
+        viewPager.setAdapter(pAdapter);
+        viewPager.setOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
 
         return view;
     }
@@ -108,6 +139,11 @@ public class RateTab extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 
     /**
