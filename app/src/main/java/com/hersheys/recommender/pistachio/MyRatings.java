@@ -91,13 +91,14 @@ public class MyRatings extends Fragment {
         Iterator iter = set.iterator();
         while(iter.hasNext()){
             FirebaseStorage storage = FirebaseStorage.getInstance();
-            String path = "movie_images/" + iter.next().toString() + ".jpg";
+            final Integer mid = (Integer) iter.next();
+            String path = "movie_images/" + mid.toString() + ".jpg";
             storage.getReference().child(path).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                 //Here Your Storage Path is path where you have uploaded your file/image.
                 @Override
                 public void onSuccess(Uri uri) {
                     // Got the download URI for '*File/image*'
-                    mList.add(new item(R.drawable.daredevil, "Daredevil (2017)", "Adventure | Animation", "IMDB: 7.2", uri.toString()));
+                    //mList.add(new item(R.drawable.daredevil, "Daredevil (2017)", "Adventure | Animation", "IMDB: 7.2", uri.toString(), mid.intValue()));
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override

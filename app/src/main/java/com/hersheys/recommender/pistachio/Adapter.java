@@ -1,6 +1,7 @@
 package com.hersheys.recommender.pistachio;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,11 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
@@ -52,13 +58,46 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
     }
 
     @Override
-    public void onBindViewHolder(myViewHolder holder, final int position) {
+    public void onBindViewHolder(final myViewHolder holder, final int position) {
         //holder.background.setImageResource(mData.get(position).getBackground());
         Picasso.with(mContext).load(mData.get(position).getUri()).into(holder.background);
-        holder.title.setText(mData.get(position).getTitle());
-        holder.genres.setText(mData.get(position).getGenres());
-        holder.imdb.setText(mData.get(position).getRating());
+        //holder.title.setText(mData.get(position).getTitle());
+        //holder.genres.setText(mData.get(position).getGenres());
+        //holder.imdb.setText(mData.get(position).getRating());
         holder.background.setClipToOutline(true);
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference MovieRef = database.getReference().child("Movies").child(Integer.toString(mData.get(position).getMovieId()));
+
+        MovieRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String title, genres, imdb;
+                title = (String)dataSnapshot.child("title").getValue();
+                genres = (String)dataSnapshot.child("genre").getValue();
+                imdb = (String)dataSnapshot.child("imdb_rating").getValue();
+                if(title!=null)
+                    holder.title.setText(title);
+                else
+                    holder.title.setText("");
+
+                if(genres!=null)
+                    holder.genres.setText(genres);
+                else
+                    holder.genres.setText("Other");
+
+                if(imdb!=null)
+                    holder.imdb.setText("IMDB: " + imdb);
+                else
+                    holder.imdb.setText("IMDB: N/A");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
         holder.crossButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {

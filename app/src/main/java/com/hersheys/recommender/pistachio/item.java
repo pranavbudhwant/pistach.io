@@ -7,13 +7,20 @@ public class item {
     String genres;
     String rating;
     String uri;
+    int movie_id;
 
-    public item(int background, String title, String genres, String rating, String uri) {
+    public item(int background, String title, String genres, String rating, String uri, int movie_id) {
         this.background = background;
         this.title = title;
         this.genres = genres;
         this.rating = rating;
         this.uri = uri;
+        this.movie_id = movie_id;
+    }
+
+    public  item(String uri, int movie_id){
+        this.uri = uri;
+        this.movie_id = movie_id;
     }
 
     public int getBackground() {
@@ -30,6 +37,8 @@ public class item {
 
     public String getUri(){return uri;}
 
+    public int getMovieId(){return movie_id;}
+
     public void setBackground(int background) {
         this.background = background;
     }
@@ -43,4 +52,6 @@ public class item {
     public void setRating(String rating){this.rating = rating;}
 
     public void setUri(String uri){this.uri = uri;}
+
+    public void setMovie_id(int movie_id){this.movie_id = movie_id;}
 }

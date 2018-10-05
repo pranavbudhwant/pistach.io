@@ -8,6 +8,7 @@
     android:background="@drawable/card_item_style"
     android:layout_margin="5dp"
     android:elevation="5dp"
+    android:paddingRight="5dp"
     >
 
     <ImageView
@@ -36,9 +37,9 @@
         style="@style/Base.Widget.AppCompat.RatingBar.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="60dp"
-        android:layout_marginRight="60dp"
-        android:layout_marginBottom="68dp"
+        android:layout_marginEnd="56dp"
+        android:layout_marginRight="56dp"
+        android:layout_marginBottom="72dp"
         android:isIndicator="false"
         android:numStars="5"
         android:progressTint="#febf00"
@@ -65,11 +66,11 @@
 
     <TextView
         android:id="@+id/Title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="228dp"
-        android:layout_marginLeft="228dp"
-        android:layout_marginBottom="160dp"
+        android:layout_marginStart="212dp"
+        android:layout_marginLeft="212dp"
+        android:layout_marginBottom="164dp"
         android:text="TITLE"
         android:textColor="@android:color/white"
         android:textStyle="bold"
@@ -78,10 +79,10 @@
 
     <TextView
         android:id="@+id/genre"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="228dp"
-        android:layout_marginLeft="228dp"
+        android:layout_marginStart="212dp"
+        android:layout_marginLeft="212dp"
         android:layout_marginBottom="132dp"
         android:text="Genres"
         android:textColor="@android:color/white"
@@ -92,8 +93,8 @@
         android:id="@+id/imdb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="228dp"
-        android:layout_marginLeft="228dp"
+        android:layout_marginStart="212dp"
+        android:layout_marginLeft="212dp"
         android:layout_marginBottom="104dp"
         android:text="IMDB: "
         android:textColor="@android:color/white"
@@ -111,4 +112,26 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_close_black_24dp" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="78dp"
+        android:layout_height="36dp"
+        android:layout_margin="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:padding="0dp"
+        android:text="Submit"
+        android:background="@drawable/sign_out_button_style"
+        android:backgroundTint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.821"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.909" />
 </android.support.constraint.ConstraintLayout>
