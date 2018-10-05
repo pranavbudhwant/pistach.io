@@ -11,10 +11,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -23,6 +24,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -35,9 +37,9 @@ import java.util.Set;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link MyRatings.OnFragmentInteractionListener} interface
+ * {@link NewRatings.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link MyRatings#newInstance} factory method to
+ * Use the {@link NewRatings#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class MyRatings extends Fragment {
@@ -52,10 +54,12 @@ public class MyRatings extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    private StorageReference mStorageRef;
+
+    List<item> mList = new ArrayList<>();
+
     SwipeRefreshLayout mSwipeRefreshLayout;
     RecyclerView recyclerView;
-
-
     public MyRatings() {
         // Required empty public constructor
     }
@@ -66,11 +70,11 @@ public class MyRatings extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment MyRatings.
+     * @return A new instance of fragment NewRatings.
      */
     // TODO: Rename and change types and number of parameters
-    public static MyRatings newInstance(String param1, String param2) {
-        MyRatings fragment = new MyRatings();
+    public static NewRatings newInstance(String param1, String param2) {
+        NewRatings fragment = new NewRatings();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -85,18 +89,25 @@ public class MyRatings extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        mStorageRef = FirebaseStorage.getInstance().getReference();
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_my_ratings, container, false);
+        mList.clear();
+        View view = inflater.inflate(R.layout.fragment_new_ratings, container, false);
         recyclerView = view.findViewById(R.id.card_list);
+
         mSwipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
-        final List<item> mList = new ArrayList<>();
+
+        Random random = new Random();
+        Set set = new HashSet<Integer>(5);
+
+        final Set globalSet = new HashSet<Integer>(50);
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference("Users");
+        final DatabaseReference ref = database.getReference("Users");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             // User is signed in
@@ -106,11 +117,9 @@ public class MyRatings extends Fragment {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     for(DataSnapshot ratings: dataSnapshot.getChildren()){
                         int mid = Integer.parseInt(ratings.getKey());
-                        float stars = Float.parseFloat(ratings.getValue().toString());
-                        mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(mid)+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",mid,stars,"myRatings"));
+                        globalSet.add(mid);
                     }
                 }
-
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -121,6 +130,17 @@ public class MyRatings extends Fragment {
             // No user is signed in
         }
 
+        while(set.size() < 5){
+            int newID = random.nextInt(3883);
+            if(!globalSet.contains(newID))
+                set.add(newID);
+        }
+
+        Iterator iter = set.iterator();
+        while(iter.hasNext()){
+            Integer mid = (Integer)iter.next();
+            mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+mid.toString()+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",mid.intValue(),0,"newRatings"));
+        }
         Adapter adapter = new Adapter(getActivity(), mList);
 
         recyclerView.setAdapter(adapter);
@@ -130,8 +150,9 @@ public class MyRatings extends Fragment {
             @Override
             public void onRefresh() {
                 mList.clear();
-                final FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference ref = database.getReference("Users");
+                globalSet.clear();
+                Random random = new Random();
+                Set set = new HashSet<Integer>(5);
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user != null) {
                     // User is signed in
@@ -141,11 +162,9 @@ public class MyRatings extends Fragment {
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             for(DataSnapshot ratings: dataSnapshot.getChildren()){
                                 int mid = Integer.parseInt(ratings.getKey());
-                                float stars = Float.parseFloat(ratings.getValue().toString());
-                                mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(mid)+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",mid,stars,"myRatings"));
+                                globalSet.add(mid);
                             }
                         }
-
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -155,13 +174,23 @@ public class MyRatings extends Fragment {
                 } else {
                     // No user is signed in
                 }
+
+                while(set.size() < 5){
+                    int newID = random.nextInt(3883);
+                    if(!globalSet.contains(newID))
+                        set.add(newID);
+                }
+                Iterator iter = set.iterator();
+                while(iter.hasNext()){
+                    Integer mid = (Integer)iter.next();
+                    mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+mid.toString()+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",mid.intValue(),0,"newRatings"));
+                }
                 Adapter adapter = new Adapter(getActivity(), mList);
                 recyclerView.setAdapter(adapter);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
-
 
         return view;
     }
