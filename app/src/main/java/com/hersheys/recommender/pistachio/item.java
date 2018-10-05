@@ -2,45 +2,31 @@ package com.hersheys.recommender.pistachio;
 
 public class item {
 
-    int background;
-    String title;
-    String genres;
-    String rating;
     String uri;
+    int movie_id;
+    float initialRating;
+    String fragment;
 
-    public item(int background, String title, String genres, String rating, String uri) {
-        this.background = background;
-        this.title = title;
-        this.genres = genres;
-        this.rating = rating;
+    public  item(String uri, int movie_id, float initialRating, String fragment){
         this.uri = uri;
+        this.movie_id = movie_id;
+        this.initialRating = initialRating;
+        this.fragment = fragment;
     }
-
-    public int getBackground() {
-        return background;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getGenres(){return genres;}
-
-    public String getRating(){return rating;}
 
     public String getUri(){return uri;}
 
-    public void setBackground(int background) {
-        this.background = background;
-    }
+    public int getMovieId(){return movie_id;}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    public float getInitialRating(){return initialRating;}
 
-    public void setGenres(String genres){this.genres = genres;}
-
-    public void setRating(String rating){this.rating = rating;}
+    public String getFragment(){return fragment;}
 
     public void setUri(String uri){this.uri = uri;}
+
+    public void setMovie_id(int movie_id){this.movie_id = movie_id;}
+
+    public void setInitialRating(float initialRating){this.initialRating = initialRating;}
+
+    public  void setFragment(String fragment){this.fragment = fragment;}
 }

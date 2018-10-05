@@ -58,16 +58,6 @@ public class SignUpActivity extends AppCompatActivity {
                                         FirebaseUser user = mAuth.getCurrentUser();
                                         Toast.makeText(SignUpActivity.this, "Authentication successful.",
                                                 Toast.LENGTH_LONG).show();
-                                        User userObj = new User(name, email);
-                                        FirebaseDatabase.getInstance().getReference("Users")
-                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                .setValue(userObj);
-
-                                    /*
-                                    User userObj = new User(name, email);
-                                    FirebaseDatabase.getInstance().getReference("Users")
-                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                        .setValue(userObj);*/
 
 
                                     FirebaseAuth auth = FirebaseAuth.getInstance();

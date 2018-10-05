@@ -18,7 +18,6 @@
         </activity>
         <activity android:name=".SignUpActivity" />
         <activity android:name=".UserHomeActivity" />
-        <activity android:name=".RatingPage"></activity>
     </application>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
