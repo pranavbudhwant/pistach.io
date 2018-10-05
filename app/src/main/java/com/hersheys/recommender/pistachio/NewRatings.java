@@ -3,6 +3,7 @@ package com.hersheys.recommender.pistachio;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,8 +11,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 
 /**
@@ -33,6 +45,10 @@ public class NewRatings extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    private StorageReference mStorageRef;
+
+    List<item> mList = new ArrayList<>();
 
     public NewRatings() {
         // Required empty public constructor
@@ -63,23 +79,32 @@ public class NewRatings extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        mStorageRef = FirebaseStorage.getInstance().getReference();
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_new_ratings, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.card_list);
-        List<item> mList = new ArrayList<>();
-        mList.add(new item(R.drawable.daredevil, "Daredevil (2017)", "Adventure | Animation | Comedy", "IMDB: 7.2"));
-        mList.add(new item(R.drawable.daredevil, "Daredevil (2017)", "Action | Thriller", "IMDB: 7.2"));
-        mList.add(new item(R.drawable.daredevil, "Daredevil (2017)", "Action | Thriller", "IMDB: 7.2"));
 
+
+        Random random = new Random();
+        Set set = new HashSet<Integer>(5);
+        while(set.size() < 5){
+            set.add(random.nextInt(3883));
+        }
+
+        Iterator iter = set.iterator();
+        while(iter.hasNext()){
+            mList.add(new item(R.drawable.daredevil, "Daredevil (2017)", "Action | Thriller", "IMDB: 7.2", "https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+iter.next().toString()+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a"));
+        }
         Adapter adapter = new Adapter(getActivity(), mList);
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
         return view;
     }
 

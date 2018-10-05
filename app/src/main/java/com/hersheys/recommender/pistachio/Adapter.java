@@ -11,6 +11,8 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import org.w3c.dom.Text;
 
 import java.util.*;
@@ -51,11 +53,12 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
 
     @Override
     public void onBindViewHolder(myViewHolder holder, final int position) {
-        holder.background.setImageResource(mData.get(position).getBackground());
+        //holder.background.setImageResource(mData.get(position).getBackground());
+        Picasso.with(mContext).load(mData.get(position).getUri()).into(holder.background);
         holder.title.setText(mData.get(position).getTitle());
         holder.genres.setText(mData.get(position).getGenres());
         holder.imdb.setText(mData.get(position).getRating());
-
+        holder.background.setClipToOutline(true);
         holder.crossButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
