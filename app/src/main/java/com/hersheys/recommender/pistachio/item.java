@@ -6,12 +6,14 @@ public class item {
     String title;
     String genres;
     String rating;
+    String uri;
 
-    public item(int background, String title, String genres, String rating) {
+    public item(int background, String title, String genres, String rating, String uri) {
         this.background = background;
         this.title = title;
         this.genres = genres;
         this.rating = rating;
+        this.uri = uri;
     }
 
     public int getBackground() {
@@ -26,6 +28,8 @@ public class item {
 
     public String getRating(){return rating;}
 
+    public String getUri(){return uri;}
+
     public void setBackground(int background) {
         this.background = background;
     }
@@ -37,4 +41,6 @@ public class item {
     public void setGenres(String genres){this.genres = genres;}
 
     public void setRating(String rating){this.rating = rating;}
+
+    public void setUri(String uri){this.uri = uri;}
 }
