@@ -6,12 +6,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -39,6 +42,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
         TextView genres;
         TextView imdb;
         ImageButton crossButton;
+        Button submitRatingButton;
+        RatingBar ratingBar;
         public myViewHolder(View itemView) {
             super(itemView);
             background = itemView.findViewById(R.id.CardBackground);
@@ -46,6 +51,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
             genres = itemView.findViewById(R.id.genre);
             imdb = itemView.findViewById(R.id.imdb);
             crossButton = itemView.findViewById(R.id.crossButton);
+            submitRatingButton = itemView.findViewById(R.id.submitRatingButton);
+            ratingBar = itemView.findViewById(R.id.ratingBar);
         }
     }
 
@@ -109,9 +116,40 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
                 }
             }
         });
+
+        holder.submitRatingButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                float rating = holder.ratingBar.getRating();
+                if(rating!=0) {
+                    final FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    DatabaseReference ref = database.getReference("Users");
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    if (user != null) {
+                        // User is signed in
+                        DatabaseReference userRef = ref.child(user.getUid());
+                        DatabaseReference movieRef = userRef.child("Ratings");
+                        movieRef.child(Integer.toString(mData.get(position).getMovieId())).setValue(rating);
+                        Toast.makeText(mContext, "Rating Submitted!",Toast.LENGTH_LONG).show();
+
+                        if(position>=0) {
+                            mData.remove(position);
+                            notifyItemRemoved(position);
+                            notifyItemRangeChanged(position, mData.size());
+                            //Toast.makeText(mContext, "Removed Card " + position, Toast.LENGTH_SHORT).show();
+                        }
+
+
+                    } else {
+                        // No user is signed in
+                    }
+                }
+                else{
+                    Toast.makeText(mContext, "Rating Cannot be Zero!",Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
-
-
 
     @Override
     public int getItemCount() {
