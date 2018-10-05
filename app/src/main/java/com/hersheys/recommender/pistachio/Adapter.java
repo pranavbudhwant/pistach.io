@@ -1,7 +1,10 @@
 package com.hersheys.recommender.pistachio;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,6 +47,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
         ImageButton crossButton;
         Button submitRatingButton;
         RatingBar ratingBar;
+
         public myViewHolder(View itemView) {
             super(itemView);
             background = itemView.findViewById(R.id.CardBackground);
@@ -66,12 +70,14 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
 
     @Override
     public void onBindViewHolder(final myViewHolder holder, final int position) {
-        //holder.background.setImageResource(mData.get(position).getBackground());
         Picasso.with(mContext).load(mData.get(position).getUri()).into(holder.background);
-        //holder.title.setText(mData.get(position).getTitle());
-        //holder.genres.setText(mData.get(position).getGenres());
-        //holder.imdb.setText(mData.get(position).getRating());
         holder.background.setClipToOutline(true);
+        holder.ratingBar.setRating(mData.get(position).getInitialRating());
+
+        String frag = mData.get(position).getFragment();
+        if(frag.equals("myRatings")){
+            holder.submitRatingButton.setText("Save");
+        }
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference MovieRef = database.getReference().child("Movies").child(Integer.toString(mData.get(position).getMovieId()));
@@ -99,6 +105,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
                     holder.imdb.setText("IMDB: N/A");
             }
 
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -108,11 +115,56 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
         holder.crossButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                if(position>=0) {
-                    mData.remove(position);
-                    notifyItemRemoved(position);
-                    notifyItemRangeChanged(position, mData.size());
-                    Toast.makeText(mContext, "Removed Card " + position, Toast.LENGTH_SHORT).show();
+                String frag = mData.get(position).getFragment();
+                if(frag.equals("newRatings")){
+                    if(position>=0) {
+                        mData.remove(position);
+                        notifyItemRemoved(position);
+                        notifyItemRangeChanged(position, mData.size());
+                        Toast.makeText(mContext, "Removed Card " + position, Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else if(frag.equals("myRatings")){
+                    AlertDialog.Builder builder;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        builder = new AlertDialog.Builder(mContext, android.R.style.Theme_Material_Dialog_Alert);
+                    } else {
+                        builder = new AlertDialog.Builder(mContext);
+                    }
+                    builder.setTitle("Delete Rating?")
+                            .setMessage("Your rating will be deleted permanently!")
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // continue with delete
+                                    final FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                    DatabaseReference ref = database.getReference("Users");
+                                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                    if (user != null) {
+                                        // User is signed in
+                                        DatabaseReference userRef = ref.child(user.getUid());
+                                        DatabaseReference movieRef = userRef.child("Ratings");
+                                        movieRef.child(Integer.toString(mData.get(position).getMovieId())).removeValue();
+                                        Toast.makeText(mContext, "Rating Deleted!", Toast.LENGTH_LONG).show();
+                                        if (position >= 0) {
+                                            mData.remove(position);
+                                            notifyItemRemoved(position);
+                                            notifyItemRangeChanged(position, mData.size());
+                                            //Toast.makeText(mContext, "Removed Card " + position, Toast.LENGTH_SHORT).show();
+                                        }
+
+                                    }
+                                    else{
+
+                                    }
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // do nothing
+                                }
+                            })
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
                 }
             }
         });
@@ -122,27 +174,32 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
             public void onClick(View v) {
                 float rating = holder.ratingBar.getRating();
                 if(rating!=0) {
-                    final FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference ref = database.getReference("Users");
-                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    if (user != null) {
-                        // User is signed in
-                        DatabaseReference userRef = ref.child(user.getUid());
-                        DatabaseReference movieRef = userRef.child("Ratings");
-                        movieRef.child(Integer.toString(mData.get(position).getMovieId())).setValue(rating);
-                        Toast.makeText(mContext, "Rating Submitted!",Toast.LENGTH_LONG).show();
+                    String frag = mData.get(position).getFragment();
 
-                        if(position>=0) {
-                            mData.remove(position);
-                            notifyItemRemoved(position);
-                            notifyItemRangeChanged(position, mData.size());
-                            //Toast.makeText(mContext, "Removed Card " + position, Toast.LENGTH_SHORT).show();
+                        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+                        DatabaseReference ref = database.getReference("Users");
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                        if (user != null) {
+                            // User is signed in
+                            DatabaseReference userRef = ref.child(user.getUid());
+                            DatabaseReference movieRef = userRef.child("Ratings");
+                            movieRef.child(Integer.toString(mData.get(position).getMovieId())).setValue(rating);
+                            if(frag.equals("newRatings")) {
+                                Toast.makeText(mContext, "Rating Submitted!", Toast.LENGTH_LONG).show();
+                                if (position >= 0) {
+                                    mData.remove(position);
+                                    notifyItemRemoved(position);
+                                    notifyItemRangeChanged(position, mData.size());
+                                    //Toast.makeText(mContext, "Removed Card " + position, Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                            else if(frag.equals("myRatings")){
+                                Toast.makeText(mContext, "Rating Saved!", Toast.LENGTH_LONG).show();
+                            }
+
+                        } else {
+                            // No user is signed in}
                         }
-
-
-                    } else {
-                        // No user is signed in
-                    }
                 }
                 else{
                     Toast.makeText(mContext, "Rating Cannot be Zero!",Toast.LENGTH_LONG).show();

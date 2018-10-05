@@ -89,6 +89,7 @@ public class NewRatings extends Fragment {
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        mList.clear();
         View view = inflater.inflate(R.layout.fragment_new_ratings, container, false);
         recyclerView = view.findViewById(R.id.card_list);
 
@@ -103,7 +104,7 @@ public class NewRatings extends Fragment {
         Iterator iter = set.iterator();
         while(iter.hasNext()){
             Integer mid = (Integer)iter.next();
-            mList.add(new item(R.drawable.daredevil, "Daredevil (2017)", "Action | Thriller", "IMDB: 7.2", "https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+mid.toString()+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",mid.intValue()));
+            mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+mid.toString()+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",mid.intValue(),0,"newRatings"));
         }
         Adapter adapter = new Adapter(getActivity(), mList);
 
@@ -122,7 +123,7 @@ public class NewRatings extends Fragment {
                 Iterator iter = set.iterator();
                 while(iter.hasNext()){
                     Integer mid = (Integer)iter.next();
-                    mList.add(new item(R.drawable.daredevil, "Daredevil (2017)", "Action | Thriller", "IMDB: 7.2", "https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+mid.toString()+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",mid.intValue()));
+                    mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+mid.toString()+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",mid.intValue(),0,"newRatings"));
                 }
                 Adapter adapter = new Adapter(getActivity(), mList);
                 recyclerView.setAdapter(adapter);
