@@ -16,6 +16,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -97,8 +104,36 @@ public class NewRatings extends Fragment {
 
         Random random = new Random();
         Set set = new HashSet<Integer>(5);
+
+        final Set globalSet = new HashSet<Integer>(50);
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference ref = database.getReference("Users");
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            // User is signed in
+            DatabaseReference userRatingRef = ref.child(user.getUid()).child("Ratings");
+            userRatingRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for(DataSnapshot ratings: dataSnapshot.getChildren()){
+                        int mid = Integer.parseInt(ratings.getKey());
+                        globalSet.add(mid);
+                    }
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+        } else {
+            // No user is signed in
+        }
+
         while(set.size() < 5){
-            set.add(random.nextInt(3883));
+            int newID = random.nextInt(3883);
+            if(!globalSet.contains(newID))
+                set.add(newID);
         }
 
         Iterator iter = set.iterator();
@@ -115,10 +150,35 @@ public class NewRatings extends Fragment {
             @Override
             public void onRefresh() {
                 mList.clear();
+                globalSet.clear();
                 Random random = new Random();
                 Set set = new HashSet<Integer>(5);
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null) {
+                    // User is signed in
+                    DatabaseReference userRatingRef = ref.child(user.getUid()).child("Ratings");
+                    userRatingRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            for(DataSnapshot ratings: dataSnapshot.getChildren()){
+                                int mid = Integer.parseInt(ratings.getKey());
+                                globalSet.add(mid);
+                            }
+                        }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
+                } else {
+                    // No user is signed in
+                }
+
                 while(set.size() < 5){
-                    set.add(random.nextInt(3883));
+                    int newID = random.nextInt(3883);
+                    if(!globalSet.contains(newID))
+                        set.add(newID);
                 }
                 Iterator iter = set.iterator();
                 while(iter.hasNext()){

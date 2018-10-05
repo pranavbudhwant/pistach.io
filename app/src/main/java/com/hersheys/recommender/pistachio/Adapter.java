@@ -81,6 +81,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference MovieRef = database.getReference().child("Movies").child(Integer.toString(mData.get(position).getMovieId()));
+        final Set globalSet = new HashSet<Integer>(50);
+        final DatabaseReference UserRef = database.getReference("Users");
+        final Random random = new Random();
 
         MovieRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -117,12 +120,43 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
             public void onClick(View view) {
                 String frag = mData.get(position).getFragment();
                 if(frag.equals("newRatings")){
-                    if(position>=0) {
+                    if(position>=0){
+                        globalSet.add(mData.get(position).getMovieId());
                         mData.remove(position);
                         notifyItemRemoved(position);
                         notifyItemRangeChanged(position, mData.size());
                         Toast.makeText(mContext, "Removed Card " + position, Toast.LENGTH_SHORT).show();
                     }
+
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    if (user != null) {
+                        // User is signed in
+                        DatabaseReference userRatingRef = UserRef.child(user.getUid()).child("Ratings");
+                        userRatingRef.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                for(DataSnapshot ratings: dataSnapshot.getChildren()){
+                                    int mid = Integer.parseInt(ratings.getKey());
+                                    globalSet.add(mid);
+                                }
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+                    } else {
+                        // No user is signed in
+                    }
+
+                    int newID;
+                    do{
+                        newID = random.nextInt(3883);
+                    }while(globalSet.contains(newID));
+
+                    mData.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(newID)+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",newID,0,"newRatings"));
+                    notifyItemInserted(mData.size()-1);
                 }
                 else if(frag.equals("myRatings")){
                     AlertDialog.Builder builder;
@@ -187,10 +221,19 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
                             if(frag.equals("newRatings")) {
                                 Toast.makeText(mContext, "Rating Submitted!", Toast.LENGTH_LONG).show();
                                 if (position >= 0) {
+                                    globalSet.add(mData.get(position).getMovieId());
                                     mData.remove(position);
                                     notifyItemRemoved(position);
                                     notifyItemRangeChanged(position, mData.size());
                                     //Toast.makeText(mContext, "Removed Card " + position, Toast.LENGTH_SHORT).show();
+                                    int newID;
+                                    do{
+                                        newID = random.nextInt(3883);
+                                    }while(globalSet.contains(newID));
+
+                                    mData.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(newID)+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",newID,0,"newRatings"));
+                                    notifyItemInserted(mData.size()-1);
+
                                 }
                             }
                             else if(frag.equals("myRatings")){
