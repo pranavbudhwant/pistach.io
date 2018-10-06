@@ -1,6 +1,7 @@
 package com.hersheys.recommender.pistachio;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -24,8 +25,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Text;
 
 import java.util.*;
 
@@ -57,7 +56,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
             imdb = itemView.findViewById(R.id.imdb);
             crossButton = itemView.findViewById(R.id.crossButton);
             submitRatingButton = itemView.findViewById(R.id.submitRatingButton);
-            ratingBar = itemView.findViewById(R.id.ratingBar);
+            ratingBar = itemView.findViewById(R.id.ratingBar2);
         }
     }
 
@@ -73,6 +72,15 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
     public void onBindViewHolder(final myViewHolder holder, final int position) {
         Picasso.with(mContext).load(mData.get(position).getUri()).into(holder.background);
         holder.background.setClipToOutline(true);
+
+        holder.background.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent movieIntent = new Intent(mContext, Movie.class);
+                mContext.startActivity(movieIntent);
+            }
+        });
+
         holder.ratingBar.setRating(mData.get(position).getInitialRating());
 
         String frag = mData.get(position).getFragment();
