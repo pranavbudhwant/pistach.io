@@ -5,6 +5,7 @@
     <color name="colorAccent">#000000</color>
     <color name="colorEndColor">#cecdcd</color>
     <color name="colorStartColor">#121212</color>
+    <color name="colorCardBG">#f5f5f5</color>
     <color name="white">#fff</color>
     <color name="colorStarActive">#febf00</color>
     <color name="startblue">#09c6fd</color>
