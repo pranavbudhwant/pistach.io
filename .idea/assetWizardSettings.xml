@@ -91,7 +91,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/Applications/Android%20Studio.app/Contents/plugins/android/lib/android.jar!/images/material_design_icons/communication/ic_email_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/social/ic_whatshot_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -101,13 +101,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="cacaca" />
-                            <entry key="height" value="36" />
-                            <entry key="outputName" value="profile_email_asset" />
-
+                            <entry key="outputName" value="ic_whatshot_black_24dp" />
                             <entry key="overrideSize" value="true" />
-                            <entry key="sourceFile" value="$APPLICATION_HOME_DIR$/bin/C:\Users\prnvb" />
-                            <entry key="width" value="36" />
+                            <entry key="sourceFile" value="C:\Program Files\Android\Android Studio\bin\C:\Users\prnvb" />
                           </map>
                         </option>
                       </PersistentState>

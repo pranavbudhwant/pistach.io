@@ -15,7 +15,7 @@ import android.widget.Toast;
 import com.hersheys.recommender.pistachio.NewRatings.OnFragmentInteractionListener;
 
 
-public class UserHomeActivity extends AppCompatActivity implements GetRecommendationsTab.OnFragmentInteractionListener, RateTab.OnFragmentInteractionListener, UserTab.OnFragmentInteractionListener, MyRatings.OnFragmentInteractionListener, NewRatings.OnFragmentInteractionListener {
+public class UserHomeActivity extends AppCompatActivity implements GetRecommendationsTab.OnFragmentInteractionListener, RateTab.OnFragmentInteractionListener, UserTab.OnFragmentInteractionListener, MyRatings.OnFragmentInteractionListener, NewRatings.OnFragmentInteractionListener, WatchLater.OnFragmentInteractionListener, Recommended.OnFragmentInteractionListener {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override

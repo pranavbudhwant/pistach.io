@@ -3,7 +3,9 @@ package com.hersheys.recommender.pistachio;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,7 +24,7 @@ import java.util.List;
  * Use the {@link GetRecommendationsTab#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class GetRecommendationsTab extends Fragment {
+public class GetRecommendationsTab extends Fragment implements Recommended.OnFragmentInteractionListener, WatchLater.OnFragmentInteractionListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -74,6 +76,30 @@ public class GetRecommendationsTab extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_get_recommendations_tab, container, false);
+        TabLayout tabLayout = (TabLayout)view.findViewById(R.id.recommTabLayout);
+
+        final ViewPager viewPager = (ViewPager)view.findViewById(R.id.getRecommedationPager);
+        final RecommedationAdapter pAdapter = new RecommedationAdapter(getChildFragmentManager(), tabLayout.getTabCount());
+        viewPager.setAdapter(pAdapter);
+        viewPager.setOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
         return view;
     }
 
@@ -99,6 +125,11 @@ public class GetRecommendationsTab extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 
     /**
