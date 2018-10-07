@@ -55,6 +55,9 @@ public class MyRatings extends Fragment {
     SwipeRefreshLayout mSwipeRefreshLayout;
     RecyclerView recyclerView;
 
+    View view;
+
+    List<item> mList;
 
     public MyRatings() {
         // Required empty public constructor
@@ -91,10 +94,10 @@ public class MyRatings extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_my_ratings, container, false);
+        view = inflater.inflate(R.layout.fragment_my_ratings, container, false);
         recyclerView = view.findViewById(R.id.card_list);
         mSwipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
-        final List<item> mList = new ArrayList<>();
+        mList = new ArrayList<>();
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference("Users");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -109,6 +112,8 @@ public class MyRatings extends Fragment {
                         float stars = Float.parseFloat(ratings.getValue().toString());
                         mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(mid)+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",mid,stars,"myRatings"));
                     }
+                    /*if(mList.size()>0)
+                        view.findViewById(R.id.my_ratings_such_empty).setVisibility(View.INVISIBLE);*/
                 }
 
                 @Override
@@ -144,6 +149,10 @@ public class MyRatings extends Fragment {
                                 float stars = Float.parseFloat(ratings.getValue().toString());
                                 mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(mid)+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",mid,stars,"myRatings"));
                             }
+                            if(mList.size()>0)
+                                view.findViewById(R.id.my_ratings_such_empty).setVisibility(View.INVISIBLE);
+                            else
+                                view.findViewById(R.id.my_ratings_such_empty).setVisibility(View.VISIBLE);
                         }
 
                         @Override
@@ -155,16 +164,20 @@ public class MyRatings extends Fragment {
                 } else {
                     // No user is signed in
                 }
+
                 Adapter adapter = new Adapter(getActivity(), mList);
                 recyclerView.setAdapter(adapter);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
-
-
-
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState){
+        if(mList.size()>0)
+            view.findViewById(R.id.my_ratings_such_empty).setVisibility(View.INVISIBLE);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

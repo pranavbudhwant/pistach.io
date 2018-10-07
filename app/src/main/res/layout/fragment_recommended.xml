@@ -6,9 +6,10 @@
     tools:context=".Recommended">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
-
+    <ImageView
+        android:id="@+id/recommended_such_empty"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/such_empty"
+        android:layout_gravity="center"/>
 </FrameLayout>

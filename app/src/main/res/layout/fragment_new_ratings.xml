@@ -6,7 +6,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".NewRatings">
 
+
     <!-- TODO: Update blank fragment layout -->
+    <ImageView
+        android:id="@+id/new_ratings_such_empty"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/such_empty"
+        android:layout_centerInParent="true"/>
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"

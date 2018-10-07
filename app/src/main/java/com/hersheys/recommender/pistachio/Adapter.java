@@ -1,5 +1,6 @@
 package com.hersheys.recommender.pistachio;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.DialogInterface;
@@ -36,7 +37,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
     public Adapter(Context mContext, List<item> mData) {
         this.mContext = mContext;
         this.mData = mData;
-        this.notifyDataSetChanged();
     }
 
     public class myViewHolder extends RecyclerView.ViewHolder{

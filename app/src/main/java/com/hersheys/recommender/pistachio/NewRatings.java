@@ -97,7 +97,7 @@ public class NewRatings extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mList.clear();
-        View view = inflater.inflate(R.layout.fragment_new_ratings, container, false);
+        final View view = inflater.inflate(R.layout.fragment_new_ratings, container, false);
         recyclerView = view.findViewById(R.id.card_list);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
@@ -146,11 +146,14 @@ public class NewRatings extends Fragment {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        view.findViewById(R.id.new_ratings_such_empty).setVisibility(View.INVISIBLE);
+
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 mList.clear();
                 globalSet.clear();
+                view.findViewById(R.id.new_ratings_such_empty).setVisibility(View.VISIBLE);
                 Random random = new Random();
                 Set set = new HashSet<Integer>(5);
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -189,6 +192,7 @@ public class NewRatings extends Fragment {
                 recyclerView.setAdapter(adapter);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                 mSwipeRefreshLayout.setRefreshing(false);
+                view.findViewById(R.id.new_ratings_such_empty).setVisibility(View.INVISIBLE);
             }
         });
 
