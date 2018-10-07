@@ -34,7 +34,7 @@ import java.util.List;
 public class Movie extends AppCompatActivity {
     int movieID;
     TextView title, genre, imdb;
-    ImageView movieImage;
+    ImageView movieImage, bookmark;
     RatingBar ratingBar;
 
     RecyclerView recyclerView;
@@ -44,6 +44,8 @@ public class Movie extends AppCompatActivity {
     public Context mContext;
 
     public List<ParentObject> parentObject;
+
+    Boolean bookmark_flag;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -69,6 +71,40 @@ public class Movie extends AppCompatActivity {
         recyclerView = (RecyclerView)findViewById(R.id.movieDetailsRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        bookmark = (ImageView)findViewById(R.id.bookmark);
+        bookmark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(bookmark_flag){
+                    //Movie is bookmarked - Remove the bookmark.
+                    bookmark_flag = false;
+                    bookmark.setImageResource(R.drawable.bookmark_fill);
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    if (user != null) {
+                        FirebaseDatabase database = FirebaseDatabase.getInstance();
+                        DatabaseReference userBookmarkRef = database.getReference().child("Users").child(user.getUid()).child("Bookmarks");
+                        userBookmarkRef.child(Integer.toString(movieID)).removeValue();
+                    }
+                    else{
+
+                    }
+                }
+                else{
+                    //Movie is not bookmarked - Add the movie to bookmarks.
+                    bookmark_flag = true;
+                    bookmark.setImageResource(R.drawable.bookmark_border);
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    if (user != null) {
+                        FirebaseDatabase database = FirebaseDatabase.getInstance();
+                        DatabaseReference userBookmarkRef = database.getReference().child("Users").child(user.getUid()).child("Bookmarks");
+                        userBookmarkRef.child(Integer.toString(movieID)).setValue(true);
+                    }
+                    else{
+
+                    }
+                }
+            }
+        });
 
         title = (TextView)findViewById(R.id.movie_title);
         genre = (TextView)findViewById(R.id.movie_genre);
@@ -214,13 +250,33 @@ public class Movie extends AppCompatActivity {
             if (user != null) {
                 // User is signed in
                 DatabaseReference userRatingRef = database.getReference().child("Users").child(user.getUid()).child("Ratings");
+                DatabaseReference userBookmarkRef = database.getReference().child("Users").child(user.getUid()).child("Bookmarks");
                 userRatingRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         DataSnapshot ratingRef = dataSnapshot.child(Integer.toString(movieID));
-
                         if(ratingRef.getValue()!=null)
                             ratingBar.setRating(Float.parseFloat(ratingRef.getValue().toString()));
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+                userBookmarkRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        DataSnapshot bookmarkRef = dataSnapshot.child(Integer.toString(movieID));
+                        if(bookmarkRef.getValue()!=null) {
+                            bookmark_flag = true;
+                            bookmark.setImageResource(R.drawable.bookmark_fill);
+                        }
+                        else {
+                            bookmark_flag = false;
+                            bookmark.setImageResource(R.drawable.bookmark_border);
+                        }
                     }
 
                     @Override
