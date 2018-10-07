@@ -72,6 +72,7 @@
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
             android:background="@drawable/movie_item_style"
             tools:context=".Movie">
 
@@ -86,7 +87,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
             <TextView
-                android:id="@+id/imdb"
+                android:id="@+id/movie_imdb"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -94,11 +95,11 @@
                 android:textColor="@android:color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/imageView"
-                app:layout_constraintTop_toBottomOf="@+id/genre" />
+                app:layout_constraintTop_toBottomOf="@+id/movie_genre" />
 
 
             <TextView
-                android:id="@+id/Title"
+                android:id="@+id/movie_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="60dp"
@@ -110,7 +111,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/genre"
+                android:id="@+id/movie_genre"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -118,27 +119,27 @@
                 android:textColor="@android:color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/imageView"
-                app:layout_constraintTop_toBottomOf="@+id/Title" />
+                app:layout_constraintTop_toBottomOf="@+id/movie_title" />
 
             <RatingBar
-                android:id="@+id/ratingBar2"
+                android:id="@+id/movie_ratingBar"
                 style="@style/Base.Widget.AppCompat.RatingBar.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:isIndicator="false"
                 android:numStars="5"
-                android:progressTint="#febf00"
+                android:progressTint="@color/colorPrimary"
                 android:scaleX="1.65"
                 android:scaleY="1.65"
                 android:stepSize="1.0"
                 android:theme="@style/RatingBar"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/imageView"
-                app:layout_constraintTop_toBottomOf="@+id/imdb" />
+                app:layout_constraintTop_toBottomOf="@+id/movie_imdb" />
 
             <Button
-                android:id="@+id/submitRatingButton2"
+                android:id="@+id/movie_submitRatingButton"
                 android:layout_width="78dp"
                 android:layout_height="36dp"
                 android:layout_margin="16dp"
@@ -146,97 +147,26 @@
                 android:background="@drawable/sign_out_button_style"
                 android:backgroundTint="@color/white"
                 android:padding="0dp"
-                android:text="Submit"
+                android:text="Save"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/imageView"
-                app:layout_constraintTop_toBottomOf="@+id/ratingBar2" />
+                app:layout_constraintTop_toBottomOf="@+id/movie_ratingBar" />
 
 
-            <TextView
-                android:id="@+id/actors"
-                android:layout_width="wrap_content"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/movieDetailsRecyclerView"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="Actors : "
-                android:textColor="@android:color/black"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageView" />
+                app:layout_constraintTop_toBottomOf="@+id/imageView"
+                android:paddingTop="10dp"
+                android:paddingBottom="20dp">
+            </android.support.v7.widget.RecyclerView>
 
-            <TextView
-                android:id="@+id/director"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:text="Director : "
-                android:textColor="@android:color/black"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/actors" />
-
-            <TextView
-                android:id="@+id/country"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:text="Country : "
-                android:textColor="@android:color/black"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/director" />
-
-            <TextView
-                android:id="@+id/language"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:text="Language : "
-                android:textColor="@android:color/black"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/country" />
-
-            <TextView
-                android:id="@+id/duration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:text="Duration : "
-                android:textColor="@android:color/black"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/language" />
-
-            <TextView
-                android:id="@+id/awards"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:text="Awards : "
-                android:textColor="@android:color/black"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/duration" />
-
-            <TextView
-                android:id="@+id/plot"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:text="Plot :"
-                android:textColor="@android:color/black"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/awards" />
 
         </android.support.constraint.ConstraintLayout>
+
 
     </ScrollView>
 </android.support.constraint.ConstraintLayout>

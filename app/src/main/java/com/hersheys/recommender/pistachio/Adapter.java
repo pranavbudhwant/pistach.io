@@ -77,6 +77,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
             @Override
             public void onClick(View v) {
                 Intent movieIntent = new Intent(mContext, Movie.class);
+                movieIntent.putExtra("movieID", mData.get(position).getMovieId());
                 mContext.startActivity(movieIntent);
             }
         });
