@@ -71,7 +71,7 @@
                         android:textStyle="bold"
                         android:textSize="20sp"
                         android:paddingTop="10dp"
-                        android:textColor="@color/startblue" />
+                        android:textColor="@color/colorPrimary" />
                 </LinearLayout>
                 <LinearLayout
                     android:gravity="center"
@@ -92,7 +92,7 @@
                         android:textStyle="bold"
                         android:textSize="20sp"
                         android:paddingTop="10dp"
-                        android:textColor="@color/startblue" />
+                        android:textColor="@color/colorPrimary" />
                 </LinearLayout>
 
             </LinearLayout>
