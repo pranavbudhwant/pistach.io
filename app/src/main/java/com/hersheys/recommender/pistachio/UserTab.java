@@ -51,7 +51,7 @@ public class UserTab extends Fragment implements View.OnClickListener {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    private FirebaseAuth mAuth;
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
 
     // TODO: Rename and change types of parameters
@@ -162,10 +162,10 @@ public class UserTab extends Fragment implements View.OnClickListener {
         final FirebaseUser user = mAuth.getInstance().getCurrentUser();
 
         profilePhoto = user.getPhotoUrl();
-        Toast.makeText(getContext(),profilePhoto.toString(),Toast.LENGTH_LONG).show();
+        //Toast.makeText(getContext(),profilePhoto.toString(),Toast.LENGTH_LONG).show();
 
         imgButton =(ImageView) view.findViewById(R.id.profile_photo);
-        imgButton.setImageURI(profilePhoto);
+        //imgButton.setImageURI(profilePhoto);
         imgButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -192,18 +192,23 @@ public class UserTab extends Fragment implements View.OnClickListener {
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
-
+        final String email = userEmail.getText().toString();
         view.findViewById(R.id.editPassword).setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                mAuth.sendPasswordResetEmail(user.getEmail()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
-                            Toast.makeText(getContext(),"Password Reset Email Sent",Toast.LENGTH_LONG).show();
+                if(email!=null) {
+                    mAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(getContext(), "Password Reset Email Sent", Toast.LENGTH_LONG).show();
+                            }
                         }
-                    }
-                });
+                    });
+                }
+                else{
+                    Toast.makeText(getContext(), email, Toast.LENGTH_LONG).show();
+                }
             }
         });
 
