@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -17,12 +19,22 @@ import android.graphics.BitmapFactory;
 import android.provider.MediaStore;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.text.Collator;
+import java.util.UUID;
 
 
 /**
@@ -39,6 +51,8 @@ public class UserTab extends Fragment implements View.OnClickListener {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -48,7 +62,9 @@ public class UserTab extends Fragment implements View.OnClickListener {
 
     Button signOutButton;
     ImageView imgButton;
-
+    TextView userName,userEmail;
+    Uri profilePhoto;
+    SwipeRefreshLayout mSwipeRefreshLayout;
 
     private static int RESULT_LOAD_IMG = 1;
     String imgDecodableString;
@@ -114,8 +130,16 @@ public class UserTab extends Fragment implements View.OnClickListener {
                 imgDecodableString = cursor.getString(columnIndex);
                 cursor.close();
                 // Set the Image in ImageView after decoding the String
-                imgButton.setImageBitmap(BitmapFactory.decodeFile(imgDecodableString));
-                //imgButton.setImageURI(selectedImage);
+                //imgButton.setImageBitmap(BitmapFactory.decodeFile(imgDecodableString));
+                FirebaseUser user = mAuth.getInstance().getCurrentUser();
+
+                /*if (selectedImage != null) {
+                    FirebaseStorage database = FirebaseStorage.getInstance();
+                    StorageReference ref = database.getReference();
+                    ref.child("Users/").child(user.getUid()).child("ProfilePhoto")
+                            .child(UUID.randomUUID(ref.putFile(selectedImage)));
+                */
+                imgButton.setImageURI(selectedImage);
             }
             else {
                 Toast.makeText(this.getContext(), "You haven't picked Image",
@@ -131,16 +155,68 @@ public class UserTab extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_user_tab, container, false);
+        final View view = inflater.inflate(R.layout.fragment_user_tab, container, false);
         signOutButton = (Button)view.findViewById(R.id.signOut);
         signOutButton.setOnClickListener((View.OnClickListener) this);
 
+        final FirebaseUser user = mAuth.getInstance().getCurrentUser();
+
+        profilePhoto = user.getPhotoUrl();
+        //Toast.makeText(getContext(),profilePhoto.toString(),Toast.LENGTH_LONG).show();
+
         imgButton =(ImageView) view.findViewById(R.id.profile_photo);
+        //imgButton.setImageURI(profilePhoto);
         imgButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(),"Image button",Toast.LENGTH_LONG).show();
                 loadImagefromGallery(v);
+                Toast.makeText(getContext(),"Profile Photo Added",Toast.LENGTH_LONG).show();
+            }
+        });
+
+
+        userName = (TextView)view.findViewById(R.id.userName);
+        userEmail = (TextView)view.findViewById(R.id.userEmail);
+
+        userName.setText(user.getDisplayName());
+        userEmail.setText(user.getEmail());
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.refresh_profile);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                view.findViewById(R.id.profilePage).setVisibility(View.INVISIBLE);
+                userName.setText(user.getDisplayName());
+                userEmail.setText(user.getEmail());
+                view.findViewById(R.id.profilePage).setVisibility(View.VISIBLE);
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
+        final String email = userEmail.getText().toString();
+        view.findViewById(R.id.editPassword).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if(email!=null) {
+                    mAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(getContext(), "Password Reset Email Sent", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+                }
+                else{
+                    Toast.makeText(getContext(), email, Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        view.findViewById(R.id.editProfile).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent editIntent = new Intent(getContext(), EditProfile.class);
+                getContext().startActivity(editIntent);
             }
         });
 

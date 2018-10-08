@@ -73,15 +73,15 @@
             android:layout_height="match_parent"
             android:layout_marginTop="5dp"
             android:background="@drawable/movie_item_style"
+            android:elevation="3dp"
             tools:context=".Movie">
 
             <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="200dp"
                 android:layout_height="250dp"
-                android:layout_marginTop="8dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/movie_imdb"
