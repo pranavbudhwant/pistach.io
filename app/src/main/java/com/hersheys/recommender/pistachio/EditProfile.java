@@ -25,7 +25,7 @@ public class EditProfile extends AppCompatActivity {
     TextInputEditText  editemailField,editnameField;
     String email, name, pass, cpass;
     Button saveButton;
-    private FirebaseAuth mAuth;
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
 
     @Override
@@ -75,8 +75,15 @@ public class EditProfile extends AppCompatActivity {
                     finish();
                 }
                 else {
-                    Toast.makeText(getApplicationContext(), "Enter Valid Email and Password", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Enter Valid Email", Toast.LENGTH_LONG).show();
                 }
+            }
+        });
+
+        findViewById(R.id.edit_back_button).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
     }
