@@ -23,11 +23,11 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Arrays;
-import java.util.Random;
 import java.util.Set;
 
 import org.tensorflow.contrib.android.*;
@@ -67,10 +67,37 @@ public class Recommended extends Fragment {
     private String INPUT_NAME = "dense_33_input_3";
     private String OUTPUT_NAME = "output_node0";
     private TensorFlowInferenceInterface tf;
-    private float []movie_ratings = new float[3883];
+    float []movie_ratings = new float[3883];
 
     //ARRAY TO HOLD THE PREDICTIONS
     float[] prediction = new float[3883];
+    Set globalSet = new HashSet<Integer>(50);
+
+    class Pred{
+        public int index;
+        public float predicted_rating;
+
+        public int getIndex() {
+            return index;
+        }
+
+        public void setIndex(int index) {
+            this.index = index;
+        }
+
+        public float getPredicted_rating() {
+            return predicted_rating;
+        }
+
+        public void setPredicted_rating(float predicted_rating) {
+            this.predicted_rating = predicted_rating;
+        }
+
+        public Pred(int index, float predicted_rating) {
+            this.index = index;
+            this.predicted_rating = predicted_rating;
+        }
+    }
 
     public Recommended() {
         // Required empty public constructor
@@ -82,22 +109,20 @@ public class Recommended extends Fragment {
         tf.feed(INPUT_NAME,movie_ratings,1,3883);
         tf.run(new String[]{OUTPUT_NAME});
         tf.fetch(OUTPUT_NAME,prediction);
-        //Arrays.sort(prediction);
-        float max = -1.f;
-        int []arr = new int[3883];
-        int loc = 0;
-        for(int j=0; j<3883; j++){
-            for(int i=0; i<3883; i++){
-                if(max<prediction[i]){
-                    max = prediction[i];
-                    loc = i;
-                }
-            }
-            max = -1.f;
-            prediction[loc] = -1.f;
-            arr[j] = loc;
-        }
 
+        List<Pred> preds = new ArrayList<>();
+        for(int i=0; i<3883; i++)
+            preds.add(new Pred(i, prediction[i]));
+
+        Collections.sort(preds, new Comparator<Pred>() {
+            @Override
+            public int compare(Pred o1, Pred o2) {
+                return Float.compare(o1.getPredicted_rating(), o2.getPredicted_rating());
+            }
+        });
+        int []arr = new int[3883];
+        for(int i=0; i<3883; i++)
+            arr[i] = preds.get(i).getIndex();
         return arr;
     }
 
@@ -136,9 +161,6 @@ public class Recommended extends Fragment {
         recyclerView = view.findViewById(R.id.card_list);
         mSwipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
         mList = new ArrayList<>();
-        final Random random = new Random();
-        final Set set = new HashSet<Integer>(5);
-        final Set globalSet = new HashSet<Integer>(50);
         tf = new TensorFlowInferenceInterface(getActivity().getAssets(),MODEL_PATH);
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -173,20 +195,10 @@ public class Recommended extends Fragment {
         }
 
 
-        while(set.size() < 5){
-            int newID = random.nextInt(3883);
-            if(!globalSet.contains(newID))
-                set.add(newID);
-        }
-
-
-        Iterator iter = set.iterator();
-
         int value[] = getPredictions(movie_ratings);
         int curr_index = index;
-        while(iter.hasNext()&&curr_index<index+5) {
-            int newID = random.nextInt(3883);
-            if(!globalSet.contains(newID)){
+        while(curr_index<index+5) {
+            if(!globalSet.contains(value[curr_index])){
                 curr_index++;
                 mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(value[curr_index])+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",value[curr_index],prediction[value[curr_index]],"Recommended"));
             }
@@ -202,11 +214,9 @@ public class Recommended extends Fragment {
             @Override
             public void OnBottomReached(int position) {
                 int value[] = getPredictions(movie_ratings);
-                Iterator iter = set.iterator();
                 int curr_index = index;
-                while(iter.hasNext()&&curr_index<index+5) {
-                    int newID = random.nextInt(3883);
-                    if(!globalSet.contains(newID)){
+                while(curr_index<index+5) {
+                    if(!globalSet.contains(value[curr_index])){
                         curr_index++;
                         mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(value[curr_index])+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",value[curr_index],prediction[value[curr_index]],"Recommended"));
                     }
@@ -220,6 +230,7 @@ public class Recommended extends Fragment {
             @Override
             public void onRefresh() {
                 mList.clear();
+                //globalSet.clear();
                 final FirebaseDatabase database = FirebaseDatabase.getInstance();
                 DatabaseReference ref = database.getReference("Users");
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -234,7 +245,8 @@ public class Recommended extends Fragment {
                                 float stars = Float.parseFloat(ratings.getValue().toString());
                                 //mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(mid)+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",mid,stars,"Recommended"));
                                 movie_ratings[mid] = stars;
-                                globalSet.add(mid);
+                                if(!globalSet.contains(mid))
+                                    globalSet.add(mid);
                             }
                             if(mList.size()>0)
                                 view.findViewById(R.id.my_ratings_such_empty).setVisibility(View.INVISIBLE);
@@ -251,21 +263,11 @@ public class Recommended extends Fragment {
                 } else {
                     // No user is signed in
                 }
-
-                while(set.size() < 5){
-                    int newID = random.nextInt(3883);
-                    if(!globalSet.contains(newID))
-                        set.add(newID);
-                }
                 index = 0;
-
-                Iterator iter = set.iterator();
-
                 int value[] = getPredictions(movie_ratings);
                 int curr_index = index;
-                while(iter.hasNext()&&curr_index<index+5) {
-                    int newID = random.nextInt(3883);
-                    if(!globalSet.contains(newID)){
+                while(curr_index<index+5) {
+                    if(!globalSet.contains(value[curr_index])){
                         curr_index++;
                         mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(value[curr_index])+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",value[curr_index],prediction[value[curr_index]],"Recommended"));
                     }
@@ -281,11 +283,9 @@ public class Recommended extends Fragment {
                     @Override
                     public void OnBottomReached(int position) {
                         int value[] = getPredictions(movie_ratings);
-                        Iterator iter = set.iterator();
                         int curr_index = index;
-                        while(iter.hasNext()&&curr_index<index+5) {
-                            int newID = random.nextInt(3883);
-                            if(!globalSet.contains(newID)){
+                        while(curr_index<index+5) {
+                            if(!globalSet.contains(value[curr_index])){
                                 curr_index++;
                                 mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(value[curr_index])+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",value[curr_index],prediction[value[curr_index]],"Recommended"));
                             }
