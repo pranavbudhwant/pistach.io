@@ -79,10 +79,11 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
     @Override
     public void onBindViewHolder(final myViewHolder holder, final int position) {
 
-        if(position == mData.size()-1){
-            onBottomReachedListener.OnBottomReached(position);
+        if(mData.get(position).getFragment().equals("Recommended")) {
+            if (position == mData.size() - 1) {
+                onBottomReachedListener.OnBottomReached(position);
+            }
         }
-
         Picasso.with(mContext).load(mData.get(position).getUri()).into(holder.background);
         holder.background.setClipToOutline(true);
 
