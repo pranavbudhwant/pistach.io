@@ -99,20 +99,20 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        if(user!=null){
+        if (user != null) {
             DatabaseReference userBookmarkRef = database.getReference().child("Users").child(user.getUid()).child("Bookmarks");
-
             userBookmarkRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    DataSnapshot bookmarkRef = dataSnapshot.child(Integer.toString(mData.get(position).getMovieId()));
-                    if(bookmarkRef.getValue()!=null) {
-                        holder.bookmark_flag = true;
-                        holder.bookmark.setImageResource(R.drawable.bookmark_fill);
-                    }
-                    else {
-                        holder.bookmark_flag = false;
-                        holder.bookmark.setImageResource(R.drawable.bookmark_border);
+                    if(position < mData.size()) {
+                        DataSnapshot bookmarkRef = dataSnapshot.child(Integer.toString(mData.get(position).getMovieId()));
+                        if (bookmarkRef.getValue() != null) {
+                            holder.bookmark_flag = true;
+                            holder.bookmark.setImageResource(R.drawable.bookmark_fill);
+                        } else {
+                            holder.bookmark_flag = false;
+                            holder.bookmark.setImageResource(R.drawable.bookmark_border);
+                        }
                     }
                 }
 
@@ -122,11 +122,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
                 }
             });
 
-        }
-        else {
+        } else {
 
         }
-
         holder.bookmark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -167,7 +165,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
         if(frag.equals("myRatings")){
             holder.submitRatingButton.setText("Save");
         }
-        if(frag.equals("Recommended")){
+        if(frag.equals("Recommended") || frag.equals("watchLater")){
             holder.crossButton.setVisibility(View.INVISIBLE);
             holder.ratingBar.setVisibility(View.INVISIBLE);
             holder.submitRatingButton.setVisibility(View.INVISIBLE);

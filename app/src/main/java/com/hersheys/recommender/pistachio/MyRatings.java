@@ -112,6 +112,11 @@ public class MyRatings extends Fragment {
                         float stars = Float.parseFloat(ratings.getValue().toString());
                         mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(mid)+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",mid,stars,"myRatings"));
                     }
+                    if(mList.size()>0)
+                        view.findViewById(R.id.my_ratings_such_empty).setVisibility(View.INVISIBLE);
+                    else
+                        view.findViewById(R.id.my_ratings_such_empty).setVisibility(View.VISIBLE);
+
                     /*if(mList.size()>0)
                         view.findViewById(R.id.my_ratings_such_empty).setVisibility(View.INVISIBLE);*/
                 }
