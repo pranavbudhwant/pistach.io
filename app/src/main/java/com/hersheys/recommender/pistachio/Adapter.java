@@ -33,6 +33,11 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
 
     Context mContext;
     List<item> mData;
+    OnBottomReachedListener onBottomReachedListener;
+
+    public void setOnBottomReachedListener(OnBottomReachedListener onBottomReachedListener){
+        this.onBottomReachedListener = onBottomReachedListener;
+    }
 
     public Adapter(Context mContext, List<item> mData) {
         this.mContext = mContext;
@@ -47,6 +52,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
         ImageButton crossButton;
         Button submitRatingButton;
         RatingBar ratingBar;
+        Boolean bookmark_flag;
+        ImageView bookmark;
 
         public myViewHolder(View itemView) {
             super(itemView);
@@ -57,6 +64,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
             crossButton = itemView.findViewById(R.id.crossButton);
             submitRatingButton = itemView.findViewById(R.id.submitRatingButton);
             ratingBar = itemView.findViewById(R.id.ratingBar2);
+            bookmark = itemView.findViewById(R.id.bookmarkCard);
         }
     }
 
@@ -70,6 +78,11 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
 
     @Override
     public void onBindViewHolder(final myViewHolder holder, final int position) {
+
+        if(position == mData.size()-1){
+            onBottomReachedListener.OnBottomReached(position);
+        }
+
         Picasso.with(mContext).load(mData.get(position).getUri()).into(holder.background);
         holder.background.setClipToOutline(true);
 
@@ -82,14 +95,83 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
             }
         });
 
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if(user!=null){
+            DatabaseReference userBookmarkRef = database.getReference().child("Users").child(user.getUid()).child("Bookmarks");
+
+            userBookmarkRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    DataSnapshot bookmarkRef = dataSnapshot.child(Integer.toString(mData.get(position).getMovieId()));
+                    if(bookmarkRef.getValue()!=null) {
+                        holder.bookmark_flag = true;
+                        holder.bookmark.setImageResource(R.drawable.bookmark_fill);
+                    }
+                    else {
+                        holder.bookmark_flag = false;
+                        holder.bookmark.setImageResource(R.drawable.bookmark_border);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+        }
+        else {
+
+        }
+
+        holder.bookmark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(holder.bookmark_flag){
+                    //Movie is bookmarked - Remove the bookmark.
+                    holder.bookmark_flag = false;
+                    holder.bookmark.setImageResource(R.drawable.bookmark_fill);
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    if (user != null) {
+                        FirebaseDatabase database = FirebaseDatabase.getInstance();
+                        DatabaseReference userBookmarkRef = database.getReference().child("Users").child(user.getUid()).child("Bookmarks");
+                        userBookmarkRef.child(Integer.toString(mData.get(position).getMovieId())).removeValue();
+                    }
+                    else{
+
+                    }
+                }
+                else{
+                    //Movie is not bookmarked - Add the movie to bookmarks.
+                    holder.bookmark_flag = true;
+                    holder.bookmark.setImageResource(R.drawable.bookmark_border);
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    if (user != null) {
+                        FirebaseDatabase database = FirebaseDatabase.getInstance();
+                        DatabaseReference userBookmarkRef = database.getReference().child("Users").child(user.getUid()).child("Bookmarks");
+                        userBookmarkRef.child(Integer.toString(mData.get(position).getMovieId())).setValue(true);
+                    }
+                    else{
+
+                    }
+                }
+            }
+        });
+
         holder.ratingBar.setRating(mData.get(position).getInitialRating());
 
         String frag = mData.get(position).getFragment();
         if(frag.equals("myRatings")){
             holder.submitRatingButton.setText("Save");
         }
+        if(frag.equals("Recommended")){
+            holder.crossButton.setVisibility(View.INVISIBLE);
+            holder.ratingBar.setVisibility(View.INVISIBLE);
+            holder.submitRatingButton.setVisibility(View.INVISIBLE);
+        }
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference MovieRef = database.getReference().child("Movies").child(Integer.toString(mData.get(position).getMovieId()));
         final Set globalSet = new HashSet<Integer>(50);
         final DatabaseReference UserRef = database.getReference("Users");

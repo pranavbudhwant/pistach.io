@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,8 +23,13 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Arrays;
+import java.util.Random;
+import java.util.Set;
+
 import org.tensorflow.contrib.android.*;
 
 /**
@@ -47,7 +53,7 @@ public class Recommended extends Fragment {
     private OnFragmentInteractionListener mListener;
     SwipeRefreshLayout mSwipeRefreshLayout;
     RecyclerView recyclerView;
-
+    int index = 0;
     View view;
 
     List<item> mList;
@@ -78,9 +84,9 @@ public class Recommended extends Fragment {
         tf.fetch(OUTPUT_NAME,prediction);
         //Arrays.sort(prediction);
         float max = -1.f;
-        int []arr = new int[10];
+        int []arr = new int[3883];
         int loc = 0;
-        for(int j=0; j<5; j++){
+        for(int j=0; j<3883; j++){
             for(int i=0; i<3883; i++){
                 if(max<prediction[i]){
                     max = prediction[i];
@@ -130,7 +136,9 @@ public class Recommended extends Fragment {
         recyclerView = view.findViewById(R.id.card_list);
         mSwipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
         mList = new ArrayList<>();
-
+        final Random random = new Random();
+        final Set set = new HashSet<Integer>(5);
+        final Set globalSet = new HashSet<Integer>(50);
         tf = new TensorFlowInferenceInterface(getActivity().getAssets(),MODEL_PATH);
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -146,9 +154,10 @@ public class Recommended extends Fragment {
                         int mid = Integer.parseInt(ratings.getKey());
                         float stars = Float.parseFloat(ratings.getValue().toString());
                         movie_ratings[mid] = stars;
+                        globalSet.add(mid);
                         //System.out.println("keys is:"+mid+" and rating is:"+stars);
 
-                        //mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(mid)+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",mid,stars,"myRatings"));
+                        //mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(mid)+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",mid,stars,"Recommended"));
                     }
 
                 }
@@ -163,14 +172,49 @@ public class Recommended extends Fragment {
             // No user is signed in
         }
 
-        int value[] = getPredictions(movie_ratings);
-        for(int i=0; i<5; i++) {
-            mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(value[i])+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",value[i],prediction[value[i]],"myRatings"));
+
+        while(set.size() < 5){
+            int newID = random.nextInt(3883);
+            if(!globalSet.contains(newID))
+                set.add(newID);
         }
+
+
+        Iterator iter = set.iterator();
+
+        int value[] = getPredictions(movie_ratings);
+        int curr_index = index;
+        while(iter.hasNext()&&curr_index<index+5) {
+            int newID = random.nextInt(3883);
+            if(!globalSet.contains(newID)){
+                curr_index++;
+                mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(value[curr_index])+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",value[curr_index],prediction[value[curr_index]],"Recommended"));
+            }
+
+        }
+        index = curr_index;
         Adapter adapter = new Adapter(getActivity(), mList);
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        adapter.setOnBottomReachedListener(new OnBottomReachedListener() {
+            @Override
+            public void OnBottomReached(int position) {
+                int value[] = getPredictions(movie_ratings);
+                Iterator iter = set.iterator();
+                int curr_index = index;
+                while(iter.hasNext()&&curr_index<index+5) {
+                    int newID = random.nextInt(3883);
+                    if(!globalSet.contains(newID)){
+                        curr_index++;
+                        mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(value[curr_index])+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",value[curr_index],prediction[value[curr_index]],"Recommended"));
+                    }
+
+                }
+                index = curr_index;
+            }
+        });
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -188,8 +232,9 @@ public class Recommended extends Fragment {
                             for(DataSnapshot ratings: dataSnapshot.getChildren()){
                                 int mid = Integer.parseInt(ratings.getKey());
                                 float stars = Float.parseFloat(ratings.getValue().toString());
-                                //mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(mid)+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",mid,stars,"myRatings"));
+                                //mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(mid)+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",mid,stars,"Recommended"));
                                 movie_ratings[mid] = stars;
+                                globalSet.add(mid);
                             }
                             if(mList.size()>0)
                                 view.findViewById(R.id.my_ratings_such_empty).setVisibility(View.INVISIBLE);
@@ -206,18 +251,59 @@ public class Recommended extends Fragment {
                 } else {
                     // No user is signed in
                 }
-                int []value = getPredictions(movie_ratings);
-                for(int i=0; i<5; i++) {
-                    mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(value[i])+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",value[i],prediction[value[i]],"myRatings"));
+
+                while(set.size() < 5){
+                    int newID = random.nextInt(3883);
+                    if(!globalSet.contains(newID))
+                        set.add(newID);
                 }
+                index = 0;
+
+                Iterator iter = set.iterator();
+
+                int value[] = getPredictions(movie_ratings);
+                int curr_index = index;
+                while(iter.hasNext()&&curr_index<index+5) {
+                    int newID = random.nextInt(3883);
+                    if(!globalSet.contains(newID)){
+                        curr_index++;
+                        mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(value[curr_index])+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",value[curr_index],prediction[value[curr_index]],"Recommended"));
+                    }
+
+                }
+                index = curr_index;
                 Adapter adapter = new Adapter(getActivity(), mList);
                 recyclerView.setAdapter(adapter);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                 mSwipeRefreshLayout.setRefreshing(false);
+
+                adapter.setOnBottomReachedListener(new OnBottomReachedListener() {
+                    @Override
+                    public void OnBottomReached(int position) {
+                        int value[] = getPredictions(movie_ratings);
+                        Iterator iter = set.iterator();
+                        int curr_index = index;
+                        while(iter.hasNext()&&curr_index<index+5) {
+                            int newID = random.nextInt(3883);
+                            if(!globalSet.contains(newID)){
+                                curr_index++;
+                                mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(value[curr_index])+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",value[curr_index],prediction[value[curr_index]],"Recommended"));
+                            }
+
+                        }
+                        index = curr_index;
+                    }
+                });
+
             }
         });
         return view;
 
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
