@@ -32,6 +32,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/grad" />-->
 
+    <TextView
+        android:id="@+id/movieRank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rank"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"/>
+
     <RatingBar
         android:id="@+id/ratingBar2"
         style="@style/Base.Widget.AppCompat.RatingBar.Small"

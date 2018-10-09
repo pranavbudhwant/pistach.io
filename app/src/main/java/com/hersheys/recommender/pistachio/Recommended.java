@@ -23,6 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -53,7 +54,6 @@ public class Recommended extends Fragment {
     private OnFragmentInteractionListener mListener;
     SwipeRefreshLayout mSwipeRefreshLayout;
     RecyclerView recyclerView;
-    int index = 0;
     View view;
 
     List<item> mList;
@@ -67,24 +67,27 @@ public class Recommended extends Fragment {
     private String INPUT_NAME = "dense_33_input_3";
     private String OUTPUT_NAME = "output_node0";
     private TensorFlowInferenceInterface tf;
-    private float []movie_ratings = new float[3883];
+    float []movie_ratings = new float[3883];
 
     //ARRAY TO HOLD THE PREDICTIONS
     float[] prediction = new float[3883];
 
     Set globalSet = new HashSet<Integer>(50);
 
-    public Recommended() {
-        // Required empty public constructor
+    void clearRatings(){
         for(int i=0; i<3883; i++)
             movie_ratings[i] = 0.f;
+    }
+
+    public Recommended() {
+        // Required empty public constructor
+        clearRatings();
     }
 
     public int[] getPredictions(float[] movie_ratings) {
         tf.feed(INPUT_NAME,movie_ratings,1,3883);
         tf.run(new String[]{OUTPUT_NAME});
         tf.fetch(OUTPUT_NAME,prediction);
-        //Arrays.sort(prediction);
         float max = -1.f;
         int []arr = new int[3883];
         int loc = 0;
@@ -137,12 +140,7 @@ public class Recommended extends Fragment {
         recyclerView = view.findViewById(R.id.recommended_card_list);
         mSwipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
         mList = new ArrayList<>();
-        //final Random random = new Random();
-        //final Set set = new HashSet<Integer>(5);
         tf = new TensorFlowInferenceInterface(getActivity().getAssets(),MODEL_PATH);
-
-        index = 0;
-
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference("Users");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -157,9 +155,6 @@ public class Recommended extends Fragment {
                         float stars = Float.parseFloat(ratings.getValue().toString());
                         movie_ratings[mid] = stars;
                         globalSet.add(mid);
-                        //System.out.println("keys is:"+mid+" and rating is:"+stars);
-
-                        //mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(mid)+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",mid,stars,"Recommended"));
                     }
 
                 }
@@ -173,23 +168,12 @@ public class Recommended extends Fragment {
         } else {
             // No user is signed in
         }
-
-
-        /*while(set.size() < 5){
-            int newID = random.nextInt(3883);
-            if(!globalSet.contains(newID))
-                set.add(newID);
-        }*/
-
-
-        //Iterator iter = set.iterator();
-
         int value[] = getPredictions(movie_ratings);
-        int curr_index = index;
-        while(curr_index<index+5) {
+        int curr_index = 0;
+        while(curr_index<value.length) {
             if(!globalSet.contains(value[curr_index])){
-                curr_index++;
                 mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(value[curr_index])+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",value[curr_index],prediction[value[curr_index]],"Recommended"));
+                curr_index++;
             }
 
         }
@@ -198,41 +182,23 @@ public class Recommended extends Fragment {
         else
             view.findViewById(R.id.recommended_such_empty).setVisibility(View.VISIBLE);
 
-        index = curr_index;
         Adapter adapter = new Adapter(getActivity(), mList);
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        adapter.setOnBottomReachedListener(new OnBottomReachedListener() {
-            @Override
-            public void OnBottomReached(int position) {
-                int value[] = getPredictions(movie_ratings);
-                //Iterator iter = set.iterator();
-                int curr_index = index;
-                while(curr_index<index+5) {
-                    //int newID = random.nextInt(3883);
-                    if(!globalSet.contains(value[curr_index])){
-                        curr_index++;
-                        mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(value[curr_index])+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",value[curr_index],prediction[value[curr_index]],"Recommended"));
-                    }
-
-                }
-                index = curr_index;
-            }
-        });
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 mList.clear();
                 globalSet.clear();
-                index = 0;
+
                 final FirebaseDatabase database = FirebaseDatabase.getInstance();
                 DatabaseReference ref = database.getReference("Users");
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user != null) {
                     // User is signed in
+                    //clearRatings();
                     DatabaseReference userRatingRef = ref.child(user.getUid()).child("Ratings");
                     userRatingRef.addValueEventListener(new ValueEventListener() {
                         @Override
@@ -240,7 +206,6 @@ public class Recommended extends Fragment {
                             for(DataSnapshot ratings: dataSnapshot.getChildren()){
                                 int mid = Integer.parseInt(ratings.getKey());
                                 float stars = Float.parseFloat(ratings.getValue().toString());
-                                //mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(mid)+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",mid,stars,"Recommended"));
                                 movie_ratings[mid] = stars;
                                 globalSet.add(mid);
                             }
@@ -259,50 +224,19 @@ public class Recommended extends Fragment {
                 } else {
                     // No user is signed in
                 }
-
-                /*while(set.size() < 5){
-                    int newID = random.nextInt(3883);
-                    if(!globalSet.contains(newID))
-                        set.add(newID);
-                }*/
-
-
-                //Iterator iter = set.iterator();
-
                 int value[] = getPredictions(movie_ratings);
-                int curr_index = index;
-                while(curr_index<index+5) {
-                    //int newID = random.nextInt(3883);
+                int curr_index = 0;
+                while(curr_index<value.length) {
                     if(!globalSet.contains(value[curr_index])){
-                        curr_index++;
                         mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(value[curr_index])+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",value[curr_index],prediction[value[curr_index]],"Recommended"));
+                        curr_index++;
                     }
 
                 }
-                index = curr_index;
                 Adapter adapter = new Adapter(getActivity(), mList);
                 recyclerView.setAdapter(adapter);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                 mSwipeRefreshLayout.setRefreshing(false);
-
-                adapter.setOnBottomReachedListener(new OnBottomReachedListener() {
-                    @Override
-                    public void OnBottomReached(int position) {
-                        int value[] = getPredictions(movie_ratings);
-                        //Iterator iter = set.iterator();
-                        int curr_index = index;
-                        while(curr_index<index+5) {
-                            //int newID = random.nextInt(3883);
-                            if(!globalSet.contains(value[curr_index])){
-                                curr_index++;
-                                mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(value[curr_index])+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",value[curr_index],prediction[value[curr_index]],"Recommended"));
-                            }
-
-                        }
-                        index = curr_index;
-                    }
-                });
-
             }
         });
         return view;

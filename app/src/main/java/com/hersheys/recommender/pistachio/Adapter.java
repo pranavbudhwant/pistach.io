@@ -33,11 +33,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
 
     Context mContext;
     List<item> mData;
-    OnBottomReachedListener onBottomReachedListener;
-
-    public void setOnBottomReachedListener(OnBottomReachedListener onBottomReachedListener){
-        this.onBottomReachedListener = onBottomReachedListener;
-    }
 
     public Adapter(Context mContext, List<item> mData) {
         this.mContext = mContext;
@@ -54,6 +49,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
         RatingBar ratingBar;
         Boolean bookmark_flag;
         ImageView bookmark;
+        TextView movieRank;
 
         public myViewHolder(View itemView) {
             super(itemView);
@@ -65,6 +61,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
             submitRatingButton = itemView.findViewById(R.id.submitRatingButton);
             ratingBar = itemView.findViewById(R.id.ratingBar2);
             bookmark = itemView.findViewById(R.id.bookmarkCard);
+            movieRank = itemView.findViewById(R.id.movieRank);
         }
     }
 
@@ -79,11 +76,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
     @Override
     public void onBindViewHolder(final myViewHolder holder, final int position) {
 
-        if(mData.get(position).getFragment().equals("Recommended")) {
-            if (position == mData.size() - 1) {
-                onBottomReachedListener.OnBottomReached(position);
-            }
-        }
         Picasso.with(mContext).load(mData.get(position).getUri()).into(holder.background);
         holder.background.setClipToOutline(true);
 
@@ -169,6 +161,11 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder>{
             holder.crossButton.setVisibility(View.INVISIBLE);
             holder.ratingBar.setVisibility(View.INVISIBLE);
             holder.submitRatingButton.setVisibility(View.INVISIBLE);
+            if(!frag.equals("watchLater")) {
+                holder.movieRank.setVisibility(View.VISIBLE);
+                int rank = position + 1;
+                holder.movieRank.setText(Integer.toString(rank));
+            }
         }
 
         DatabaseReference MovieRef = database.getReference().child("Movies").child(Integer.toString(mData.get(position).getMovieId()));
