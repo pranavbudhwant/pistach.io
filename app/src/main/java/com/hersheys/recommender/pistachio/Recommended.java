@@ -72,6 +72,8 @@ public class Recommended extends Fragment {
     //ARRAY TO HOLD THE PREDICTIONS
     float[] prediction = new float[3883];
 
+    Set globalSet = new HashSet<Integer>(50);
+
     public Recommended() {
         // Required empty public constructor
         for(int i=0; i<3883; i++)
@@ -97,7 +99,6 @@ public class Recommended extends Fragment {
             prediction[loc] = -1.f;
             arr[j] = loc;
         }
-
         return arr;
     }
 
@@ -132,14 +133,15 @@ public class Recommended extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_my_ratings, container, false);
-        recyclerView = view.findViewById(R.id.card_list);
+        view = inflater.inflate(R.layout.fragment_recommended, container, false);
+        recyclerView = view.findViewById(R.id.recommended_card_list);
         mSwipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
         mList = new ArrayList<>();
-        final Random random = new Random();
-        final Set set = new HashSet<Integer>(5);
-        final Set globalSet = new HashSet<Integer>(50);
+        //final Random random = new Random();
+        //final Set set = new HashSet<Integer>(5);
         tf = new TensorFlowInferenceInterface(getActivity().getAssets(),MODEL_PATH);
+
+        index = 0;
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference("Users");
@@ -173,25 +175,29 @@ public class Recommended extends Fragment {
         }
 
 
-        while(set.size() < 5){
+        /*while(set.size() < 5){
             int newID = random.nextInt(3883);
             if(!globalSet.contains(newID))
                 set.add(newID);
-        }
+        }*/
 
 
-        Iterator iter = set.iterator();
+        //Iterator iter = set.iterator();
 
         int value[] = getPredictions(movie_ratings);
         int curr_index = index;
-        while(iter.hasNext()&&curr_index<index+5) {
-            int newID = random.nextInt(3883);
-            if(!globalSet.contains(newID)){
+        while(curr_index<index+5) {
+            if(!globalSet.contains(value[curr_index])){
                 curr_index++;
                 mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(value[curr_index])+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",value[curr_index],prediction[value[curr_index]],"Recommended"));
             }
 
         }
+        if(mList.size()>0)
+            view.findViewById(R.id.recommended_such_empty).setVisibility(View.INVISIBLE);
+        else
+            view.findViewById(R.id.recommended_such_empty).setVisibility(View.VISIBLE);
+
         index = curr_index;
         Adapter adapter = new Adapter(getActivity(), mList);
 
@@ -202,11 +208,11 @@ public class Recommended extends Fragment {
             @Override
             public void OnBottomReached(int position) {
                 int value[] = getPredictions(movie_ratings);
-                Iterator iter = set.iterator();
+                //Iterator iter = set.iterator();
                 int curr_index = index;
-                while(iter.hasNext()&&curr_index<index+5) {
-                    int newID = random.nextInt(3883);
-                    if(!globalSet.contains(newID)){
+                while(curr_index<index+5) {
+                    //int newID = random.nextInt(3883);
+                    if(!globalSet.contains(value[curr_index])){
                         curr_index++;
                         mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(value[curr_index])+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",value[curr_index],prediction[value[curr_index]],"Recommended"));
                     }
@@ -220,6 +226,8 @@ public class Recommended extends Fragment {
             @Override
             public void onRefresh() {
                 mList.clear();
+                globalSet.clear();
+                index = 0;
                 final FirebaseDatabase database = FirebaseDatabase.getInstance();
                 DatabaseReference ref = database.getReference("Users");
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -237,9 +245,9 @@ public class Recommended extends Fragment {
                                 globalSet.add(mid);
                             }
                             if(mList.size()>0)
-                                view.findViewById(R.id.my_ratings_such_empty).setVisibility(View.INVISIBLE);
+                                view.findViewById(R.id.recommended_such_empty).setVisibility(View.INVISIBLE);
                             else
-                                view.findViewById(R.id.my_ratings_such_empty).setVisibility(View.VISIBLE);
+                                view.findViewById(R.id.recommended_such_empty).setVisibility(View.VISIBLE);
                         }
 
                         @Override
@@ -252,20 +260,20 @@ public class Recommended extends Fragment {
                     // No user is signed in
                 }
 
-                while(set.size() < 5){
+                /*while(set.size() < 5){
                     int newID = random.nextInt(3883);
                     if(!globalSet.contains(newID))
                         set.add(newID);
-                }
-                index = 0;
+                }*/
 
-                Iterator iter = set.iterator();
+
+                //Iterator iter = set.iterator();
 
                 int value[] = getPredictions(movie_ratings);
                 int curr_index = index;
-                while(iter.hasNext()&&curr_index<index+5) {
-                    int newID = random.nextInt(3883);
-                    if(!globalSet.contains(newID)){
+                while(curr_index<index+5) {
+                    //int newID = random.nextInt(3883);
+                    if(!globalSet.contains(value[curr_index])){
                         curr_index++;
                         mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(value[curr_index])+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",value[curr_index],prediction[value[curr_index]],"Recommended"));
                     }
@@ -281,11 +289,11 @@ public class Recommended extends Fragment {
                     @Override
                     public void OnBottomReached(int position) {
                         int value[] = getPredictions(movie_ratings);
-                        Iterator iter = set.iterator();
+                        //Iterator iter = set.iterator();
                         int curr_index = index;
-                        while(iter.hasNext()&&curr_index<index+5) {
-                            int newID = random.nextInt(3883);
-                            if(!globalSet.contains(newID)){
+                        while(curr_index<index+5) {
+                            //int newID = random.nextInt(3883);
+                            if(!globalSet.contains(value[curr_index])){
                                 curr_index++;
                                 mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(value[curr_index])+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",value[curr_index],prediction[value[curr_index]],"Recommended"));
                             }
@@ -298,7 +306,6 @@ public class Recommended extends Fragment {
             }
         });
         return view;
-
     }
 
     @Override

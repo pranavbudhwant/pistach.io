@@ -9,9 +9,11 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bignerdranch.expandablerecyclerview.Model.ParentObject;
 import com.google.firebase.auth.FirebaseAuth;
@@ -47,6 +49,8 @@ public class Movie extends AppCompatActivity {
 
     Boolean bookmark_flag;
 
+    Button submitButton;
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -70,6 +74,35 @@ public class Movie extends AppCompatActivity {
 
         recyclerView = (RecyclerView)findViewById(R.id.movieDetailsRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        submitButton = findViewById(R.id.movie_submitRatingButton);
+        ratingBar = findViewById(R.id.movie_ratingBar);
+
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                float rating = ratingBar.getRating();
+                if(rating!=0) {
+                    final FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    DatabaseReference ref = database.getReference("Users");
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    if (user != null) {
+                        // User is signed in
+                        DatabaseReference userRef = ref.child(user.getUid());
+                        DatabaseReference movieRef = userRef.child("Ratings");
+                        movieRef.child(Integer.toString(movieID)).setValue(rating);
+                        Toast.makeText(mContext, "Rating Saved!", Toast.LENGTH_LONG).show();
+                    } else {
+                        // No user is signed in}
+                    }
+                }
+                else{
+                    Toast.makeText(mContext, "Rating Cannot be Zero!",Toast.LENGTH_LONG).show();
+                }
+
+            }
+        });
+
 
         bookmark = (ImageView)findViewById(R.id.bookmark);
         bookmark.setOnClickListener(new View.OnClickListener() {

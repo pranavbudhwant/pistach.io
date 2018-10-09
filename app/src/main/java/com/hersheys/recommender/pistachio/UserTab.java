@@ -116,7 +116,7 @@ public class UserTab extends Fragment implements View.OnClickListener {
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         // Start the Intent
         startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
-        Toast.makeText(getContext(),"In Gallery Function",Toast.LENGTH_LONG).show();
+        //Toast.makeText(getContext(),"In Gallery Function",Toast.LENGTH_LONG).show();
 
 
     }
@@ -215,7 +215,7 @@ public class UserTab extends Fragment implements View.OnClickListener {
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
                                     //Log.d(TAG, "User profile updated.");
-                                    Toast.makeText(getContext(), "User Profile Image Updated", Toast.LENGTH_LONG).show();
+                                    //Toast.makeText(getContext(), "User Profile Image Updated", Toast.LENGTH_LONG).show();
                                 }
                             }
                         });
@@ -232,7 +232,7 @@ public class UserTab extends Fragment implements View.OnClickListener {
 
         imgButton =(ImageView) view.findViewById(R.id.profile_photo);
         Uri link = user.getPhotoUrl();
-        Toast.makeText(getContext(),"Link - "+link.toString(),Toast.LENGTH_LONG).show();
+        //Toast.makeText(getContext(),"Link - "+link.toString(),Toast.LENGTH_LONG).show();
 
         if(link!=null) {
             Picasso.with(getContext()).load(link).into(imgButton);
