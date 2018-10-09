@@ -21,28 +21,19 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.app.ProgressDialog;
+
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-import com.google.firebase.storage.OnProgressListener;
-import com.squareup.picasso.Picasso;
 
 import java.text.Collator;
-import java.text.DecimalFormat;
 import java.util.UUID;
 
 
@@ -71,7 +62,7 @@ public class UserTab extends Fragment implements View.OnClickListener {
 
     Button signOutButton;
     ImageView imgButton;
-    TextView userName,userEmail,ratedMovies,avgRating;
+    TextView userName,userEmail;
     Uri profilePhoto;
     SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -142,39 +133,12 @@ public class UserTab extends Fragment implements View.OnClickListener {
                 //imgButton.setImageBitmap(BitmapFactory.decodeFile(imgDecodableString));
                 FirebaseUser user = mAuth.getInstance().getCurrentUser();
 
-                if (selectedImage != null) {
-                    final ProgressDialog progressDialog = new ProgressDialog(getContext());
-                    progressDialog.setTitle("Uploading...");
-                    progressDialog.show();
-
+                /*if (selectedImage != null) {
                     FirebaseStorage database = FirebaseStorage.getInstance();
-                    StorageReference storeref = database.getReference().child("Users/");
-                    StorageReference ref = storeref.child(user.getUid());
-                    ref.putFile(selectedImage)
-                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                             @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                progressDialog.dismiss();
-                                Toast.makeText(getContext(), "Uploaded", Toast.LENGTH_SHORT).show();
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    progressDialog.dismiss();
-                                    Toast.makeText(getContext(), "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            })
-                            .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                                    double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
-                                            .getTotalByteCount());
-                                    progressDialog.setMessage("Uploaded "+(int)progress+"%");
-                                }
-                            });
-                }
-
+                    StorageReference ref = database.getReference();
+                    ref.child("Users/").child(user.getUid()).child("ProfilePhoto")
+                            .child(UUID.randomUUID(ref.putFile(selectedImage)));
+                */
                 imgButton.setImageURI(selectedImage);
             }
             else {
@@ -197,63 +161,22 @@ public class UserTab extends Fragment implements View.OnClickListener {
 
         final FirebaseUser user = mAuth.getInstance().getCurrentUser();
 
-        FirebaseStorage database = FirebaseStorage.getInstance();
-        StorageReference storeref = database.getReference().child("Users/"+user.getUid());
-        storeref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                profilePhoto = uri;
-                //Toast.makeText(getContext(), profilePhoto.toString(), Toast.LENGTH_LONG).show();
-
-
-                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setPhotoUri(profilePhoto).build();
-
-
-                user.updateProfile(profileUpdates)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    //Log.d(TAG, "User profile updated.");
-                                    Toast.makeText(getContext(), "User Profile Image Updated", Toast.LENGTH_LONG).show();
-                                }
-                            }
-                        });
-                //https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/Users%2FGxB8d51eMhhMm3wLFNu8FfXl45E3?alt=media&token=7bd359eb-f81d-4beb-962f-0561248db56b
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
-            }
-        });
+        profilePhoto = user.getPhotoUrl();
         //Toast.makeText(getContext(),profilePhoto.toString(),Toast.LENGTH_LONG).show();
 
         imgButton =(ImageView) view.findViewById(R.id.profile_photo);
-        Uri link = user.getPhotoUrl();
-        Toast.makeText(getContext(),"Link - "+link.toString(),Toast.LENGTH_LONG).show();
-
-        if(link!=null) {
-            Picasso.with(getContext()).load(link).into(imgButton);
-        }
-        else{
-        imgButton.setImageResource(R.mipmap.profile_photo);
-        }
-
+        //imgButton.setImageURI(profilePhoto);
         imgButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 loadImagefromGallery(v);
-                //Toast.makeText(getContext(),"Profile Photo Added",Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(),"Profile Photo Added",Toast.LENGTH_LONG).show();
             }
         });
 
 
         userName = (TextView)view.findViewById(R.id.userName);
         userEmail = (TextView)view.findViewById(R.id.userEmail);
-        ratedMovies = (TextView)view.findViewById(R.id.ratedMovies);
-        avgRating = (TextView)view.findViewById(R.id.avgRating);
 
         userName.setText(user.getDisplayName());
         userEmail.setText(user.getEmail());
@@ -294,31 +217,6 @@ public class UserTab extends Fragment implements View.OnClickListener {
             public void onClick(View v) {
                 Intent editIntent = new Intent(getContext(), EditProfile.class);
                 getContext().startActivity(editIntent);
-            }
-        });
-
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference ref = db.getReference("Users");
-        DatabaseReference userRatingRef = ref.child(user.getUid()).child("Ratings");
-
-        userRatingRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                long count = 0;
-                double avg = 0;
-                for(DataSnapshot ratings: dataSnapshot.getChildren()){
-                    avg += Float.parseFloat(ratings.getValue().toString());
-                    count++;
-                }
-                avg = avg/count;
-                DecimalFormat f = new DecimalFormat("##.00");
-                ratedMovies.setText(Long.toString(count));
-                avgRating.setText(f.format(avg));
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
 

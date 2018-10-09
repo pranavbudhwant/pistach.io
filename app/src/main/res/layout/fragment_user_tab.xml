@@ -40,6 +40,8 @@
                         android:layout_height="80dp"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="50dp"
+                        android:background="@drawable/profile_image_background"
+                        android:src="@mipmap/profile_photo_round"
                         android:scaleType="fitXY" />
 
                     <TextView
@@ -101,11 +103,10 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Average Rating"
+                                android:text="2nd field"
                                 android:textSize="20sp" />
 
                             <TextView
-                                android:id="@+id/avgRating"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:paddingTop="10dp"
