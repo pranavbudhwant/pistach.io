@@ -96,6 +96,7 @@ public class NewRatings extends Fragment {
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        setRetainInstance(true);
         mList.clear();
         final View view = inflater.inflate(R.layout.fragment_new_ratings, container, false);
         recyclerView = view.findViewById(R.id.card_list);

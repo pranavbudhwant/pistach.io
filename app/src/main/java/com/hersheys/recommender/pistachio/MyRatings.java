@@ -57,7 +57,7 @@ public class MyRatings extends Fragment {
 
     View view;
 
-    List<item> mList;
+    ArrayList<item> mList;
 
     public MyRatings() {
         // Required empty public constructor
@@ -94,43 +94,54 @@ public class MyRatings extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        setRetainInstance(true);
         view = inflater.inflate(R.layout.fragment_my_ratings, container, false);
         recyclerView = view.findViewById(R.id.card_list);
         mSwipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
         mList = new ArrayList<>();
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference("Users");
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            // User is signed in
-            DatabaseReference userRatingRef = ref.child(user.getUid()).child("Ratings");
-            userRatingRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for(DataSnapshot ratings: dataSnapshot.getChildren()){
-                        int mid = Integer.parseInt(ratings.getKey());
-                        float stars = Float.parseFloat(ratings.getValue().toString());
-                        mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(mid)+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",mid,stars,"myRatings"));
-                    }
-                    if(mList.size()>0)
-                        view.findViewById(R.id.my_ratings_such_empty).setVisibility(View.INVISIBLE);
-                    else
-                        view.findViewById(R.id.my_ratings_such_empty).setVisibility(View.VISIBLE);
+
+        if(savedInstanceState!=null && savedInstanceState.getParcelableArrayList("mList")!=null){
+            mList = savedInstanceState.getParcelableArrayList("mList");
+            if (mList.size() > 0)
+                view.findViewById(R.id.my_ratings_such_empty).setVisibility(View.INVISIBLE);
+            else
+                view.findViewById(R.id.my_ratings_such_empty).setVisibility(View.VISIBLE);
+        }
+        else {
+            final FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference ref = database.getReference("Users");
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user != null) {
+                // User is signed in
+                DatabaseReference userRatingRef = ref.child(user.getUid()).child("Ratings");
+                userRatingRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        mList.clear();
+                        for (DataSnapshot ratings : dataSnapshot.getChildren()) {
+                            int mid = Integer.parseInt(ratings.getKey());
+                            float stars = Float.parseFloat(ratings.getValue().toString());
+                            mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F" + Integer.toString(mid) + ".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a", mid, stars, "myRatings"));
+                        }
+                        if (mList.size() > 0)
+                            view.findViewById(R.id.my_ratings_such_empty).setVisibility(View.INVISIBLE);
+                        else
+                            view.findViewById(R.id.my_ratings_such_empty).setVisibility(View.VISIBLE);
 
                     /*if(mList.size()>0)
                         view.findViewById(R.id.my_ratings_such_empty).setVisibility(View.INVISIBLE);*/
-                }
+                    }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                }
-            });
+                    }
+                });
 
-        } else {
-            // No user is signed in
+            } else {
+                // No user is signed in
+            }
         }
-
         Adapter adapter = new Adapter(getActivity(), mList);
 
         recyclerView.setAdapter(adapter);
@@ -207,6 +218,12 @@ public class MyRatings extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("mList", mList);
     }
 
     /**

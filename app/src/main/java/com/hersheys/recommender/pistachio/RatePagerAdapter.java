@@ -6,19 +6,26 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 public class RatePagerAdapter extends FragmentStatePagerAdapter {
     int NoOfTabs;
+    NewRatings nr;
+    MyRatings mr;
+
     public RatePagerAdapter(FragmentManager fm, int NumberOfTabs) {
         super(fm);
         this.NoOfTabs = NumberOfTabs;
+        mr = null;
+        nr = null;
     }
 
     @Override
     public Fragment getItem(int position) {
         switch (position){
             case 0:
-                NewRatings nr = new NewRatings();
+                if(nr==null)
+                    nr = new NewRatings();
                 return nr;
             case 1:
-                MyRatings mr = new MyRatings();
+                if(mr==null)
+                    mr = new MyRatings();
                 return mr;
             default:
                 return null;

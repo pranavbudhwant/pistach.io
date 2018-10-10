@@ -14,15 +14,26 @@
         android:src="@drawable/such_empty"
         android:layout_gravity="center"/>
 
+    <TextView
+        android:animateLayoutChanges="true"
+        android:id="@+id/recommendation_text"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="Recommendations"
+        android:textAlignment="center"
+        android:gravity="center"/>
+
     <android.support.v4.widget.SwipeRefreshLayout
+        android:animateLayoutChanges="true"
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:layout_marginTop="30dp">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recommended_card_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"

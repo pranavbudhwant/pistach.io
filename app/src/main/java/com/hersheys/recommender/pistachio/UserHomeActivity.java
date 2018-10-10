@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.TabItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.hersheys.recommender.pistachio.NewRatings.OnFragmentInteractionListener;
@@ -24,7 +25,6 @@ public class UserHomeActivity extends AppCompatActivity implements GetRecommenda
         setContentView(R.layout.activity_user_home);
 
         TabLayout tabLayout = (TabLayout)findViewById(R.id.tabLayout);
-
         final ViewPager viewPager = (ViewPager)findViewById(R.id.pager);
         final PagerAdapter pAdapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
         viewPager.setAdapter(pAdapter);

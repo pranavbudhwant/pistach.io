@@ -76,6 +76,7 @@ public class RateTab extends Fragment implements MyRatings.OnFragmentInteraction
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        setRetainInstance(true);
         View view = inflater.inflate(R.layout.fragment_rate_tab, container, false);
 
         //set recyclerview with adapter

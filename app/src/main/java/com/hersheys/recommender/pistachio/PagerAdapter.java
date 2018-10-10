@@ -7,25 +7,34 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 public class PagerAdapter extends FragmentStatePagerAdapter {
 
     int NoOfTabs;
+    GetRecommendationsTab recommTab;
+    RateTab rTab;
+    UserTab uTab;
 
     public PagerAdapter(FragmentManager fm, int NumberOfTabs) {
         super(fm);
         this.NoOfTabs = NumberOfTabs;
+        recommTab = null;
+        rTab = null;
+        uTab = null;
     }
 
     @Override
     public Fragment getItem(int position) {
         switch (position){
             case 0:
-                GetRecommendationsTab recommTab = new GetRecommendationsTab();
+                if(recommTab==null)
+                    recommTab = new GetRecommendationsTab();
                 return recommTab;
 
             case 1:
-                RateTab rTab = new RateTab();
+                if(rTab==null)
+                    rTab = new RateTab();
                 return rTab;
 
             case 2:
-                UserTab uTab = new UserTab();
+                if(uTab==null)
+                    uTab = new UserTab();
                 return uTab;
 
             default:

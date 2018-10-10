@@ -1,7 +1,11 @@
 package com.hersheys.recommender.pistachio;
 
-public class item {
+import android.os.Parcel;
+import android.os.Parcelable;
 
+import java.io.Serializable;
+
+public class item implements Parcelable {
     String uri;
     int movie_id;
     float initialRating;
@@ -29,4 +33,14 @@ public class item {
     public void setInitialRating(float initialRating){this.initialRating = initialRating;}
 
     public  void setFragment(String fragment){this.fragment = fragment;}
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+    }
 }

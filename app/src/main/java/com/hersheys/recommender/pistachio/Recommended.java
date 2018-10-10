@@ -1,5 +1,6 @@
 package com.hersheys.recommender.pistachio;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,12 +10,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -54,9 +58,10 @@ public class Recommended extends Fragment {
     private OnFragmentInteractionListener mListener;
     SwipeRefreshLayout mSwipeRefreshLayout;
     RecyclerView recyclerView;
+    TextView recommended_textView;
     View view;
 
-    List<item> mList;
+    ArrayList<item> mList = new ArrayList<>();;
 
     //Load the tensorflow inference library
     static {
@@ -67,10 +72,10 @@ public class Recommended extends Fragment {
     private String INPUT_NAME = "dense_33_input_3";
     private String OUTPUT_NAME = "output_node0";
     private TensorFlowInferenceInterface tf;
-    float []movie_ratings = new float[3883];
+    float []movie_ratings;
 
     //ARRAY TO HOLD THE PREDICTIONS
-    float[] prediction = new float[3883];
+    float[] prediction;
 
     Set globalSet = new HashSet<Integer>(50);
 
@@ -81,6 +86,8 @@ public class Recommended extends Fragment {
 
     public Recommended() {
         // Required empty public constructor
+        movie_ratings = new float[3883];
+        prediction = new float[3883];
         clearRatings();
     }
 
@@ -132,17 +139,58 @@ public class Recommended extends Fragment {
         }
     }
 
+    public void refresh(){
+        mList.clear();
+        int value[] = getPredictions(movie_ratings);
+        for(int curr_index=0; curr_index<3883; curr_index++)
+            if(!globalSet.contains(value[curr_index]))
+                mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(value[curr_index])+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",value[curr_index],prediction[value[curr_index]],"Recommended"));
+        if(mList.size()>0)
+            view.findViewById(R.id.recommended_such_empty).setVisibility(View.INVISIBLE);
+        else
+            view.findViewById(R.id.recommended_such_empty).setVisibility(View.VISIBLE);
+
+        Adapter adapter = new Adapter(getActivity(), mList);
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) mSwipeRefreshLayout.getLayoutParams();
+        ViewGroup.MarginLayoutParams textViewParams = (ViewGroup.MarginLayoutParams) recommended_textView.getLayoutParams();
+        params.topMargin = textViewParams.height;
+        mSwipeRefreshLayout.setLayoutParams(params);
+        recommended_textView.setVisibility(View.VISIBLE);
+        recommended_textView.setText(Integer.toString(mList.size()) + " Recommendations");
+        recommended_textView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                recommended_textView.setVisibility(View.GONE);
+                ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) mSwipeRefreshLayout.getLayoutParams();
+                params.topMargin = 0;
+                mSwipeRefreshLayout.setLayoutParams(params);
+            }
+        }, 3500);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
+        setRetainInstance(true);
         view = inflater.inflate(R.layout.fragment_recommended, container, false);
+
+        ProgressDialog progressDialog = new ProgressDialog(getContext());
+        progressDialog.show();
+
         recyclerView = view.findViewById(R.id.recommended_card_list);
-        mSwipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
-        mList = new ArrayList<>();
-        tf = new TensorFlowInferenceInterface(getActivity().getAssets(),MODEL_PATH);
+        mSwipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
+        recommended_textView = view.findViewById(R.id.recommendation_text);
+
+        tf = new TensorFlowInferenceInterface(getActivity().getAssets(), MODEL_PATH);
+
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference("Users");
+        final DatabaseReference ref = database.getReference("Users");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             // User is signed in
@@ -150,39 +198,47 @@ public class Recommended extends Fragment {
             userRatingRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for(DataSnapshot ratings: dataSnapshot.getChildren()){
+                    clearRatings();
+                    globalSet.clear();
+                    for (DataSnapshot ratings : dataSnapshot.getChildren()) {
                         int mid = Integer.parseInt(ratings.getKey());
                         float stars = Float.parseFloat(ratings.getValue().toString());
                         movie_ratings[mid] = stars;
                         globalSet.add(mid);
                     }
-
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-
                 }
             });
-
         } else {
             // No user is signed in
         }
-        int value[] = getPredictions(movie_ratings);
-        int curr_index = 0;
-        while(curr_index<value.length) {
-            if(!globalSet.contains(value[curr_index])){
-                mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(value[curr_index])+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",value[curr_index],prediction[value[curr_index]],"Recommended"));
-                curr_index++;
-            }
 
+        if(savedInstanceState!=null && savedInstanceState.getParcelableArrayList("mList")!=null){
+            mList = savedInstanceState.getParcelableArrayList("mList");
+            if (mList.size() > 0)
+                view.findViewById(R.id.recommended_such_empty).setVisibility(View.INVISIBLE);
+            else
+                view.findViewById(R.id.recommended_such_empty).setVisibility(View.VISIBLE);
         }
-        if(mList.size()>0)
-            view.findViewById(R.id.recommended_such_empty).setVisibility(View.INVISIBLE);
-        else
-            view.findViewById(R.id.recommended_such_empty).setVisibility(View.VISIBLE);
-
+        else {
+            int value[] = getPredictions(movie_ratings);
+            for (int curr_index = 0; curr_index < 3883; curr_index++)
+                if (!globalSet.contains(value[curr_index]))
+                    mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F" + Integer.toString(value[curr_index]) + ".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a", value[curr_index], prediction[value[curr_index]], "Recommended"));
+            if (mList.size() > 0)
+                view.findViewById(R.id.recommended_such_empty).setVisibility(View.INVISIBLE);
+            else
+                view.findViewById(R.id.recommended_such_empty).setVisibility(View.VISIBLE);
+        }
         Adapter adapter = new Adapter(getActivity(), mList);
+
+        recommended_textView.setVisibility(View.GONE);
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) mSwipeRefreshLayout.getLayoutParams();
+        params.topMargin = 0;
+        mSwipeRefreshLayout.setLayoutParams(params);
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -190,55 +246,10 @@ public class Recommended extends Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mList.clear();
-                globalSet.clear();
-
-                final FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference ref = database.getReference("Users");
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                if (user != null) {
-                    // User is signed in
-                    //clearRatings();
-                    DatabaseReference userRatingRef = ref.child(user.getUid()).child("Ratings");
-                    userRatingRef.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            for(DataSnapshot ratings: dataSnapshot.getChildren()){
-                                int mid = Integer.parseInt(ratings.getKey());
-                                float stars = Float.parseFloat(ratings.getValue().toString());
-                                movie_ratings[mid] = stars;
-                                globalSet.add(mid);
-                            }
-                            if(mList.size()>0)
-                                view.findViewById(R.id.recommended_such_empty).setVisibility(View.INVISIBLE);
-                            else
-                                view.findViewById(R.id.recommended_such_empty).setVisibility(View.VISIBLE);
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-
-                } else {
-                    // No user is signed in
+                    refresh();
                 }
-                int value[] = getPredictions(movie_ratings);
-                int curr_index = 0;
-                while(curr_index<value.length) {
-                    if(!globalSet.contains(value[curr_index])){
-                        mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F"+Integer.toString(value[curr_index])+".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a",value[curr_index],prediction[value[curr_index]],"Recommended"));
-                        curr_index++;
-                    }
-
-                }
-                Adapter adapter = new Adapter(getActivity(), mList);
-                recyclerView.setAdapter(adapter);
-                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
-        });
+            });
+        progressDialog.dismiss();
         return view;
     }
 
@@ -270,6 +281,14 @@ public class Recommended extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("mList", mList);
+    }
+
+
 
     /**
      * This interface must be implemented by activities that contain this

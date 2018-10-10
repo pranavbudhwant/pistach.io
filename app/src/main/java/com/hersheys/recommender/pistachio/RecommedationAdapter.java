@@ -6,20 +6,26 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 public class RecommedationAdapter extends FragmentPagerAdapter {
     int NoOfTabs;
+    Recommended recomm;
+    WatchLater wl;
     public RecommedationAdapter(FragmentManager fm, int NumberOfTabs) {
         super(fm);
         this.NoOfTabs = NumberOfTabs;
+        recomm = null;
+        wl = null;
     }
 
     @Override
     public Fragment getItem(int position) {
         switch (position){
             case 0:
-                Recommended nr = new Recommended();
-                return nr;
+                if(recomm==null)
+                    recomm = new Recommended();
+                return recomm;
             case 1:
-                WatchLater mr = new WatchLater();
-                return mr;
+                if(wl==null)
+                    wl = new WatchLater();
+                return wl;
             default:
                 return null;
         }

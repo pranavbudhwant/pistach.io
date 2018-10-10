@@ -75,6 +75,7 @@ public class GetRecommendationsTab extends Fragment implements Recommended.OnFra
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        setRetainInstance(true);
         View view = inflater.inflate(R.layout.fragment_get_recommendations_tab, container, false);
         TabLayout tabLayout = (TabLayout)view.findViewById(R.id.recommTabLayout);
 

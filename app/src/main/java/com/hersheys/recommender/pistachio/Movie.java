@@ -97,7 +97,18 @@ public class Movie extends AppCompatActivity {
                     }
                 }
                 else{
-                    Toast.makeText(mContext, "Rating Cannot be Zero!",Toast.LENGTH_LONG).show();
+                    final FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    DatabaseReference ref = database.getReference("Users");
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    if (user != null) {
+                        // User is signed in
+                        DatabaseReference userRef = ref.child(user.getUid());
+                        DatabaseReference movieRef = userRef.child("Ratings");
+                        movieRef.child(Integer.toString(movieID)).removeValue();
+                        Toast.makeText(mContext, "Rating Saved!", Toast.LENGTH_LONG).show();
+                    } else {
+                        // No user is signed in}
+                    }
                 }
 
             }
