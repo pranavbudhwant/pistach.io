@@ -98,8 +98,11 @@ public class WatchLater extends Fragment {
         mSwipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
         mList = new ArrayList<>();
 
-        if(savedInstanceState!=null && savedInstanceState.getParcelableArrayList("mList")!=null){
-            mList = savedInstanceState.getParcelableArrayList("mList");
+        if(savedInstanceState!=null && savedInstanceState.getIntegerArrayList("movieIDs")!=null){
+            for(Integer mid:savedInstanceState.getIntegerArrayList("movieIDs")){
+                mList.add(new item("https://firebasestorage.googleapis.com/v0/b/pistachio-8f641.appspot.com/o/images%2F" + mid.toString() + ".jpg?alt=media&token=baff526a-ac90-4390-84ac-da4b9ee0f29a", mid.intValue(), 0, "watchLater"));
+            }
+            //mList = savedInstanceState.getParcelableArrayList("mList");
             if (mList.size() > 0)
                 view.findViewById(R.id.watch_later_such_empty).setVisibility(View.INVISIBLE);
             else
@@ -216,7 +219,13 @@ public class WatchLater extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList("mList", mList);
+        ArrayList<Integer> movieIDs = new ArrayList<>();
+        for(item it:mList){
+            movieIDs.add(it.getMovieId());
+        }
+        outState.putIntegerArrayList("movieIDs", movieIDs);
+
+        //outState.putParcelableArrayList("mList", mList);
     }
 
     /**

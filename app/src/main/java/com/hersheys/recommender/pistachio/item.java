@@ -18,6 +18,13 @@ public class item implements Parcelable {
         this.fragment = fragment;
     }
 
+    public item(Parcel in){
+        this.uri = in.readString();
+        this.movie_id = in.readInt();
+        this.initialRating = in.readFloat();
+        this.fragment = in.readString();
+    }
+
     public String getUri(){return uri;}
 
     public int getMovieId(){return movie_id;}
@@ -41,6 +48,18 @@ public class item implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-
+        dest.writeString(this.uri);
+        dest.writeInt(this.movie_id);
+        dest.writeFloat(this.initialRating);
+        dest.writeString(this.fragment);
     }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator<item>(){
+        public item createFromParcel(Parcel in){
+            return new item(in);
+        }
+        public item[] newArray(int size){
+            return new item[size];
+        }
+    };
 }
