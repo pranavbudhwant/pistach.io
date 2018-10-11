@@ -136,4 +136,9 @@ public class SignUpActivity extends AppCompatActivity {
         else
             return true;
     }
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
+
 }
