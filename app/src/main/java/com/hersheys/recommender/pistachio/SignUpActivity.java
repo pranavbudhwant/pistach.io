@@ -32,6 +32,15 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            // User is signed in
+            FirebaseAuth.getInstance().signOut();
+        } else {
+            // No user is signed in
+        }
+
+
         mAuth = FirebaseAuth.getInstance();
 
         emailField = (TextInputEditText)findViewById(R.id.emailField);
