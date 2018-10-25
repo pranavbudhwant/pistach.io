@@ -54,7 +54,7 @@ public class SignInActivity extends AppCompatActivity {
                 password = passwordField.getText().toString();
 
                 if(validateEmail(email) && validatePassword(password)) {
-                    Toast.makeText(getApplicationContext(), "E:" + email + "P:" + password, Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(), "E:" + email + "P:" + password, Toast.LENGTH_LONG).show();
                     mAuth.signInWithEmailAndPassword(email, password)
                             .addOnCompleteListener(SignInActivity.this, new OnCompleteListener<AuthResult>() {
                                 @Override

@@ -105,7 +105,7 @@ public class Movie extends AppCompatActivity {
                         DatabaseReference userRef = ref.child(user.getUid());
                         DatabaseReference movieRef = userRef.child("Ratings");
                         movieRef.child(Integer.toString(movieID)).removeValue();
-                        Toast.makeText(mContext, "Rating Saved!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(mContext, "Rating Saved", Toast.LENGTH_LONG).show();
                     } else {
                         // No user is signed in}
                     }
